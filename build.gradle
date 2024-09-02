@@ -18,10 +18,32 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot 스타터 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Lombok 라이브러리 (컴파일 전용 및 애노테이션 프로세서)
+    compileOnly 'org.projectlombok:lombok:1.18.32'  // 최신 버전으로 통일
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+    // MySQL 커넥터 (런타임 전용)
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.33' // 중복 제거 및 최신 버전으로 통일
+
+    // JWT(JSON Web Token) 라이브러리
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+    // Apache Commons 라이브러리
+    implementation 'commons-net:commons-net:3.8.0'
+    implementation 'commons-io:commons-io:2.11.0'
+
+    // 테스트 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
