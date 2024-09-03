@@ -80,7 +80,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/", "/error").permitAll() // 특정 경로 허용
-                                .requestMatchers("/auth/**", "/oauth2/**").permitAll() // 인증 관련 경로 허용
+                                .requestMatchers("/auth/**", "/oauth2/**","/auth/signup","/ftp/upload").permitAll() // 인증 관련 경로 허용
                                 .anyRequest().authenticated()) // 나머지 모든 요청은 인증 필요
                 .oauth2Login(oauth2Login ->
                         oauth2Login
