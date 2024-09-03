@@ -1,6 +1,5 @@
 package com.leafresh.backend.oauth.security;
 
-
 import com.leafresh.backend.oauth.config.AppProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
@@ -29,21 +28,20 @@ public class TokenProvider {
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
         return Jwts.builder()
-                .setSubject(Long.toString(userPrincipal.getId()))
+                .setSubject(Integer.toString(userPrincipal.getUserId()))  // Long에서 Integer로 수정
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
                 .compact();
-
     }
 
-    public Long getUserIdFromToken(String token) {
+    public Integer getUserIdFromToken(String token) {  // 반환 타입을 Long에서 Integer로 변경
         Claims claims = Jwts.parser()
                 .setSigningKey(appProperties.getAuth().getTokenSecret())
                 .parseClaimsJws(token)
                 .getBody();
 
-        return Long.parseLong(claims.getSubject());
+        return Integer.parseInt(claims.getSubject());  // Integer로 파싱
     }
 
     public boolean validateToken(String authToken) {
@@ -63,5 +61,4 @@ public class TokenProvider {
         }
         return false;
     }
-
 }

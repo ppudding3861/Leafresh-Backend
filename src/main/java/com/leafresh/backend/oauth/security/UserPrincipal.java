@@ -1,51 +1,40 @@
 package com.leafresh.backend.oauth.security;
 
-
 import com.leafresh.backend.oauth.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class UserPrincipal implements OAuth2User, UserDetails {
-    private Long id;
+public class UserPrincipal implements UserDetails {
+    private Integer userId;  // User 엔티티의 userId에 맞게 수정
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
-    private Map<String, Object> attributes;
 
-    public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
+    public UserPrincipal(Integer userId, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.userId = userId;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
     }
 
     public static UserPrincipal create(User user) {
-        List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new UserPrincipal(
-                user.getId(),
-                user.getEmail(),
-                user.getPassword(),
+                user.getUserId(),  // User 엔티티의 userId 사용
+                user.getUserMailAdress(),  // User 엔티티의 이메일 필드 사용
+                user.getUserPassword(),  // User 엔티티의 비밀번호 필드 사용
                 authorities
         );
     }
 
-    public static UserPrincipal create(User user, Map<String, Object> attributes) {
-        UserPrincipal userPrincipal = UserPrincipal.create(user);
-        userPrincipal.setAttributes(attributes);
-        return userPrincipal;
-    }
-
-    public Long getId() {
-        return id;
+    public Integer getUserId() {
+        return userId;
     }
 
     public String getEmail() {
@@ -85,19 +74,5 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
-
-    @Override
-    public String getName() {
-        return String.valueOf(id);
     }
 }

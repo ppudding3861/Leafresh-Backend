@@ -1,6 +1,5 @@
 package com.leafresh.backend.oauth.security;
 
-
 import com.leafresh.backend.oauth.exception.ResourceNotFoundException;
 import com.leafresh.backend.oauth.model.User;
 import com.leafresh.backend.oauth.repository.UserRepository;
@@ -11,10 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Created by rajeevkumarsingh on 02/08/17.
- */
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -24,18 +19,19 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        // User 엔티티의 이메일 필드명에 맞게 메서드 수정
+        User user = userRepository.findByUserMailAdress(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with email : " + email)
-        );
+                );
 
         return UserPrincipal.create(user);
     }
 
     @Transactional
-    public UserDetails loadUserById(Long id) {
+    public UserDetails loadUserById(Integer id) {  // User 엔티티의 ID 타입에 맞게 수정
         User user = userRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("User", "id", id)
+                () -> new ResourceNotFoundException("User", "id", id)
         );
 
         return UserPrincipal.create(user);

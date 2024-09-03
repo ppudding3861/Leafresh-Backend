@@ -1,18 +1,15 @@
 package com.leafresh.backend.oauth.repository;
 
-
 import com.leafresh.backend.oauth.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Integer> {  // Long을 Integer로 수정
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findByUserMailAdress(String userMailAdress);  // 메서드명과 필드명 수정
 
-    Boolean existsByEmail(String email);
-
+    Boolean existsByUserMailAdress(String userMailAdress);  // 메서드명과 필드명 수정
 }

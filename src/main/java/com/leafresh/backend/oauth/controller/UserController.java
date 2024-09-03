@@ -1,6 +1,5 @@
 package com.leafresh.backend.oauth.controller;
 
-
 import com.leafresh.backend.oauth.exception.ResourceNotFoundException;
 import com.leafresh.backend.oauth.model.User;
 import com.leafresh.backend.oauth.repository.UserRepository;
@@ -20,7 +19,10 @@ public class UserController {
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        return userRepository.findById(userPrincipal.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
+        // userPrincipal에서 userId를 가져올 때 적절한 메서드 사용
+        Integer userId = userPrincipal.getUserId();
+
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 }
