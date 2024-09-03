@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/leafresh
+    url: jdbc:mysql://1.214.19.22:6002/leafresh
     username: leafresh
     password: leafresh
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update # 운영 환경에서는 create-drop 대신 update 사용 권장
+      ddl-auto: create-drop # 운영 환경에서는 create-drop 대신 update 사용 권장
     show-sql: true
     properties:
       hibernate:
