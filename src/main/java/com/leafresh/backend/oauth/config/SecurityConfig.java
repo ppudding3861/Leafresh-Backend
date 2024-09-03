@@ -3,10 +3,6 @@ package com.leafresh.backend.oauth.config;
 import com.leafresh.backend.oauth.security.CustomUserDetailsService;
 import com.leafresh.backend.oauth.security.RestAuthenticationEntryPoint;
 import com.leafresh.backend.oauth.security.TokenAuthenticationFilter;
-import com.leafresh.backend.oauth.security.oauth2.CustomOAuth2UserService;
-import com.leafresh.backend.oauth.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.leafresh.backend.oauth.security.oauth2.OAuth2AuthenticationFailureHandler;
-import com.leafresh.backend.oauth.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,26 +30,9 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
-
-    @Autowired
-    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-
-    @Autowired
-    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-
-    @Autowired
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter();
-    }
-
-    @Bean
-    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
-        return new HttpCookieOAuth2AuthorizationRequestRepository();
     }
 
     @Bean
@@ -69,33 +48,19 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.and()) // 기본 CORS 설정
+                .cors(cors -> cors.and()) // CORS 설정 적용
                 .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 무상태로 설정
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT 인증이므로 세션 비활성화
+                .csrf(csrf -> csrf.disable()) // JWT 사용 시 CSRF 비활성화
                 .formLogin(formLogin -> formLogin.disable()) // 폼 로그인 비활성화
                 .httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 인증 비활성화
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(new RestAuthenticationEntryPoint())) // 예외 처리 설정
+                        exceptionHandling.authenticationEntryPoint(new RestAuthenticationEntryPoint())) // 인증 실패 처리
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/error").permitAll() // 특정 경로 허용
-                                .requestMatchers("/auth/**", "/oauth2/**","/auth/signup","/ftp/upload").permitAll() // 인증 관련 경로 허용
-                                .anyRequest().authenticated()) // 나머지 모든 요청은 인증 필요
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-                                .authorizationEndpoint(authorizationEndpoint ->
-                                        authorizationEndpoint
-                                                .baseUri("/oauth2/authorization")
-                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository())) // OAuth2 인증 요청 설정
-                                .redirectionEndpoint(redirectionEndpoint ->
-                                        redirectionEndpoint
-                                                .baseUri("/oauth2/callback/**")) // 리디렉션 엔드포인트 설정 - 와일드카드를 하나로 사용
-                                .userInfoEndpoint(userInfoEndpoint ->
-                                        userInfoEndpoint
-                                                .userService(customOAuth2UserService)) // 사용자 정보 서비스 설정
-                                .successHandler(oAuth2AuthenticationSuccessHandler) // 성공 핸들러 설정
-                                .failureHandler(oAuth2AuthenticationFailureHandler)); // 실패 핸들러 설정
+                                .requestMatchers("/", "/error").permitAll() // 허용할 경로 설정
+                                .requestMatchers("/auth/**", "/auth/signup", "/ftp/upload").permitAll() // 인증 관련 경로 허용
+                                .anyRequest().authenticated()); // 그 외 요청은 인증 필요
 
         // Add our custom Token based authentication filter
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
