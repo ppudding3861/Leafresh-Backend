@@ -1,4 +1,4 @@
-package com.leafresh.backend.oauth.security;
+package com.leafresh.backend.oauth.service;
 
 import com.leafresh.backend.oauth.exception.ResourceNotFoundException;
 import com.leafresh.backend.oauth.exception.BadRequestException;
@@ -8,6 +8,7 @@ import com.leafresh.backend.oauth.model.UserStatus;
 import com.leafresh.backend.oauth.payload.SignUpRequest;
 import com.leafresh.backend.oauth.payload.ApiResponse;
 import com.leafresh.backend.oauth.repository.UserRepository;
+import com.leafresh.backend.oauth.security.UserPrincipal;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

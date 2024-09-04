@@ -1,12 +1,11 @@
 package com.leafresh.backend.oauth.controller;
 
-import com.leafresh.backend.oauth.exception.BadRequestException;
 import com.leafresh.backend.oauth.payload.ApiResponse;
 import com.leafresh.backend.oauth.payload.AuthResponse;
 import com.leafresh.backend.oauth.payload.LoginRequest;
 import com.leafresh.backend.oauth.payload.SignUpRequest;
-import com.leafresh.backend.oauth.security.CustomUserDetailsService;
-import com.leafresh.backend.oauth.security.TokenProvider;
+import com.leafresh.backend.oauth.service.CustomUserDetailsService;
+import com.leafresh.backend.oauth.service.TokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,7 @@
-package com.leafresh.backend.oauth.security;
+package com.leafresh.backend.oauth.service;
 
 import com.leafresh.backend.oauth.config.AppProperties;
+import com.leafresh.backend.oauth.security.UserPrincipal;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import org.slf4j.Logger;
