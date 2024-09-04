@@ -16,6 +16,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/ftp")
 @CrossOrigin(origins = "${app.cors.allowedOrigins}")  // application.yml에서 가져온 값 사용
+
 public class FTPController {
 
     private final FtpImgLoaderUtil2 ftpFileUploadService;
