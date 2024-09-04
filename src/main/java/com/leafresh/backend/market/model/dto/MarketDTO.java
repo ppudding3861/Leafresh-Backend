@@ -1,5 +1,7 @@
 package com.leafresh.backend.market.model.dto;
 
+import com.leafresh.backend.market.model.entity.VisibleScope;
+
 import java.time.LocalDateTime;
 
 public class MarketDTO {
@@ -9,18 +11,23 @@ public class MarketDTO {
     private String marketContent;
     private String marketImage;
     private boolean marketStatus;
+    private VisibleScope marketVisibleScope; // 게시글 공개 범위
     private LocalDateTime marketCreatedAt;
     private String userNickname;
 
     public MarketDTO() {
     }
 
-    public String getMarketCategory() {
-        return marketCategory;
-    }
-
-    public void setMarketCategory(String marketCategory) {
+    public MarketDTO(int marketId, String marketCategory, String marketTitle, String marketContent, String marketImage, boolean marketStatus, VisibleScope marketVisibleScope, LocalDateTime marketCreatedAt, String userNickname) {
+        this.marketId = marketId;
         this.marketCategory = marketCategory;
+        this.marketTitle = marketTitle;
+        this.marketContent = marketContent;
+        this.marketImage = marketImage;
+        this.marketStatus = marketStatus;
+        this.marketVisibleScope = marketVisibleScope;
+        this.marketCreatedAt = marketCreatedAt;
+        this.userNickname = userNickname;
     }
 
     public int getMarketId() {
@@ -29,6 +36,14 @@ public class MarketDTO {
 
     public void setMarketId(int marketId) {
         this.marketId = marketId;
+    }
+
+    public String getMarketCategory() {
+        return marketCategory;
+    }
+
+    public void setMarketCategory(String marketCategory) {
+        this.marketCategory = marketCategory;
     }
 
     public String getMarketTitle() {
@@ -63,6 +78,14 @@ public class MarketDTO {
         this.marketStatus = marketStatus;
     }
 
+    public VisibleScope getMarketVisibleScope() {
+        return marketVisibleScope;
+    }
+
+    public void setMarketVisibleScope(VisibleScope marketVisibleScope) {
+        this.marketVisibleScope = marketVisibleScope;
+    }
+
     public LocalDateTime getMarketCreatedAt() {
         return marketCreatedAt;
     }
@@ -88,6 +111,7 @@ public class MarketDTO {
                 ", marketContent='" + marketContent + '\'' +
                 ", marketImage='" + marketImage + '\'' +
                 ", marketStatus=" + marketStatus +
+                ", marketVisibleScope=" + marketVisibleScope +
                 ", marketCreatedAt=" + marketCreatedAt +
                 ", userNickname='" + userNickname + '\'' +
                 '}';
