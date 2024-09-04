@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/ftp")
-@CrossOrigin(origins = "https://leafresh-frontend.vercel.app")
+@CrossOrigin(origins = "http://localhost:8000")
 public class FTPController {
 
     private final FtpImgLoaderUtil2 ftpFileUploadService;
