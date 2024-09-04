@@ -5,6 +5,7 @@ import com.leafresh.backend.feed.model.entity.FeedEntity;
 import com.leafresh.backend.feed.model.entity.FeedStatus;
 import com.leafresh.backend.feed.repository.FeedRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ public class FeedService {
 	}
 
 	// 피드생성
+	@Transactional
 	public FeedDTO createFeed(FeedDTO feedDTO) {
 		FeedEntity feedEntity = convertToEntity(feedDTO);
 		FeedEntity savedEntity = feedRepository.save(feedEntity);
@@ -27,12 +29,14 @@ public class FeedService {
 	}
 
 	// 피드상세조회 - DELETE_FEED 상태 제외
+	@Transactional
 	public Optional<FeedDTO> getFeedById(Integer feedId) {
 		Optional<FeedEntity> feedEntity = feedRepository.findByFeedIdAndFeedStatusNot(feedId, FeedStatus.FEED_DELETE);
 		return feedEntity.map(this::convertToDTO);
 	}
 
 	// 피드전체조회 - DELETE_FEED 상태 제외
+	@Transactional
 	public List<FeedDTO> getAllFeeds() {
 		List<FeedEntity> feedEntities = feedRepository.findByFeedStatusNot(FeedStatus.FEED_DELETE);
 		return feedEntities.stream()
@@ -41,6 +45,7 @@ public class FeedService {
 	}
 
 	// 삭제된피드조회
+	@Transactional
 	public List<FeedDTO> getDeletedFeeds() {
 		List<FeedEntity> feedEntities = feedRepository.findByFeedStatus(FeedStatus.FEED_DELETE);
 		return feedEntities.stream()
@@ -56,6 +61,7 @@ public class FeedService {
 	}
 
 	// 논리적피드삭제
+	@Transactional
 	public void deleteFeed(Integer feedId) {
 		Optional<FeedEntity> feedEntityOptional = feedRepository.findById(feedId);
 
@@ -67,7 +73,6 @@ public class FeedService {
 			feedRepository.save(updatedFeed);  // 새로운 객체 저장, Hibernate가 feedDeleteAt을 자동으로 설정
 		});
 	}
-
 
 	// DTO -> Entity 변환 메서드
 	private FeedEntity convertToEntity(FeedDTO feedDTO) {
