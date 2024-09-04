@@ -1,9 +1,7 @@
 package com.leafresh.backend.oauth.config;
 
-import com.leafresh.backend.oauth.security.CustomUserDetailsService;
 import com.leafresh.backend.oauth.security.RestAuthenticationEntryPoint;
 import com.leafresh.backend.oauth.security.TokenAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,9 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         prePostEnabled = true
 )
 public class SecurityConfig {
-
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
@@ -59,7 +54,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/", "/error").permitAll() // 허용할 경로 설정
-                                .requestMatchers("/auth/**", "/auth/signup", "/ftp/upload").permitAll() // 인증 관련 경로 허용
+                                .requestMatchers("/auth/**","/login","/signup","/ftp/upload","/ws/**").permitAll() // 인증 관련 경로 허용
+                                .requestMatchers("/chat/**", "/room/**").hasAnyRole("USER", "ADMIN")// 채팅 관련 엔드포인트 인증 필요
                                 .anyRequest().authenticated()); // 그 외 요청은 인증 필요
 
         // Add our custom Token based authentication filter

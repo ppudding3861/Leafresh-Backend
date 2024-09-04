@@ -1,6 +1,7 @@
-package com.leafresh.chat.model.entity;
+package com.leafresh.backend.chat.model.entity;
 
 
+import com.leafresh.backend.oauth.model.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "chat_room_id", nullable = false)
@@ -40,7 +41,7 @@ public class ChatMessage {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ChatMessage(Long id, ChatRoom chatRoom, User sender, User recipient, String content, LocalDateTime timestamp) {
+    public ChatMessage(Integer id, ChatRoom chatRoom, User sender, User recipient, String content, LocalDateTime timestamp) {
         this.id = id;
         this.chatRoom = chatRoom;
         this.sender = sender;
@@ -49,11 +50,11 @@ public class ChatMessage {
         this.timestamp = timestamp;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
