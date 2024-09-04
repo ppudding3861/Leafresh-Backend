@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/ftp")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${app.cors.allowedOrigins}") 
 public class FTPController {
 
     private final FtpImgLoaderUtil2 ftpFileUploadService;
