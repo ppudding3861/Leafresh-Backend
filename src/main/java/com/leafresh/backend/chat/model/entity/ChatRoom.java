@@ -1,6 +1,7 @@
-package com.leafresh.chat.model.entity;
+package com.leafresh.backend.chat.model.entity;
 
 
+import com.leafresh.backend.oauth.model.User;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,7 +9,7 @@ import jakarta.persistence.*;
 public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "user1_id")
@@ -26,11 +27,11 @@ public class ChatRoom {
         this.user2 = user2;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

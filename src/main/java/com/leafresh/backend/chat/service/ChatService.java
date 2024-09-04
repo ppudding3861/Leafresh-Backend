@@ -1,12 +1,12 @@
-package com.leafresh.chat.service;
+package com.leafresh.backend.chat.service;
 
 
-import com.leafresh.chat.model.entity.ChatMessage;
-import com.leafresh.chat.model.entity.ChatRoom;
-import com.leafresh.chat.model.entity.User;
-import com.leafresh.chat.repository.ChatMessageRepository;
-import com.leafresh.chat.repository.ChatRoomRepository;
-import com.leafresh.chat.repository.ChatUserRepository;
+import com.leafresh.backend.chat.model.entity.ChatMessage;
+import com.leafresh.backend.chat.model.entity.ChatRoom;
+import com.leafresh.backend.chat.repository.ChatMessageRepository;
+import com.leafresh.backend.chat.repository.ChatRoomRepository;
+import com.leafresh.backend.chat.repository.ChatUserRepository;
+import com.leafresh.backend.oauth.model.User;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class ChatService {
 //        return chatRoomRepository.findByUser1IdAndUser2IdOrUser1IdAndUser2Id(userId1, userId2, userId2, userId1);
 //    }
     @Transactional
-    public ChatRoom createChatRoom(Long userId1, Long userId2) {
+    public ChatRoom createChatRoom(Integer userId1, Integer userId2) {
         // 새 채팅방 생성 로직
         ChatRoom newRoom = new ChatRoom();
         newRoom.setUser1(userRepository.findById(userId1).orElseThrow());
@@ -42,7 +42,7 @@ public class ChatService {
 
     // ------수정코드 8/2 15:33
     @Transactional
-    public ChatRoom findChatRoomById(Long roomId) {
+    public ChatRoom findChatRoomById(Integer roomId) {
         return chatRoomRepository.findById(roomId).orElse(null); // Optional을 사용하여 채팅방 조회
     }
 
@@ -53,14 +53,14 @@ public class ChatService {
         chatMessage.setTimestamp(now); // LocalDateTime 타입으로 설정
         ChatRoom chatRoom = chatMessage.getChatRoom();
         User sender = chatMessage.getSender();
-        User recipient = (chatRoom.getUser1().getId().equals(sender.getId())) ? chatRoom.getUser2() : chatRoom.getUser1();
+        User recipient = (chatRoom.getUser1().getUserId().equals(sender.getUserId())) ? chatRoom.getUser2() : chatRoom.getUser1();
         chatMessage.setRecipient(recipient);
         // 메시지를 데이터베이스에 저장
         chatMessageRepository.save(chatMessage);
     }
 
     @Transactional
-    public List<ChatMessage> getChatMessages(Long chatRoomId) {
+    public List<ChatMessage> getChatMessages(Integer chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("Chat room not found"));
         return chatMessageRepository.findByChatRoomOrderByTimestampAsc(chatRoom);
@@ -68,29 +68,29 @@ public class ChatService {
 
     // 채팅방 나가기
     @Transactional
-    public void deleteChatRoom(Long chatRoomId) {
+    public void deleteChatRoom(Integer chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("Chat room not found"));
         chatMessageRepository.deleteByChatRoom(chatRoom);
         chatRoomRepository.delete(chatRoom);
     }
     @Transactional
-    public ChatRoom getChatRoomById(Long chatRoomId) {
+    public ChatRoom getChatRoomById(Integer chatRoomId) {
         return chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("Chat room not found"));
     }
     @Transactional
-    public User findUserById(Long userId) {
+    public User findUserById(Integer userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
     @Transactional
-    public ChatRoom findOrCreateChatRoom(Long user1Id, Long user2Id) {
+    public ChatRoom findOrCreateChatRoom(Integer user1Id, Integer user2Id) {
         User user1 = userRepository.findById(user1Id).orElseThrow(() -> new RuntimeException("User not found: " + user1Id));
         User user2 = userRepository.findById(user2Id).orElseThrow(() -> new RuntimeException("User not found: " + user2Id));
 
         // 항상 ID가 작은 사용자를 user1으로 설정
-        if (user1.getId() > user2.getId()) {
+        if (user1.getUserId() > user2.getUserId()) {
             User temp = user1;
             user1 = user2;
             user2 = temp;

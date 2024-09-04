@@ -2,6 +2,7 @@ package com.leafresh.backend.ftp.controller;
 
 import com.leafresh.backend.ftp.service.FtpImgLoaderUtil2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,7 +15,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/ftp")
-@CrossOrigin(origins = "${app.cors.allowedOrigins}")
+@CrossOrigin(origins = "${app.cors.allowedOrigins}")  // application.yml에서 가져온 값 사용
 public class FTPController {
 
     private final FtpImgLoaderUtil2 ftpFileUploadService;
@@ -51,7 +52,7 @@ public class FTPController {
     @GetMapping("/image")
     public ResponseEntity<Resource> getImage(@RequestParam("path") String path) {
         try {
-            Resource resource = ftpFileUploadService.download(path);
+            Resource resource = ftpFileUploadService.download(path);  // FTP 서버에서 이미지 다운로드
             if (resource == null) {
                 return ResponseEntity.notFound().build();
             }

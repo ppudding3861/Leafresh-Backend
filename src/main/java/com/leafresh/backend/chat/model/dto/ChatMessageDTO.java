@@ -1,19 +1,19 @@
-package com.leafresh.chat.model.dto;
+package com.leafresh.backend.chat.model.dto;
 
 import java.time.LocalDateTime;
 
 public class ChatMessageDTO {
 
-    private Long id;
-    private Long senderId;
-    private Long recipientId;
+    private Integer id;
+    private Integer senderId;
+    private Integer recipientId;
     private String content;
     private LocalDateTime timestamp;
 
     public ChatMessageDTO() {
     }
 
-    public ChatMessageDTO(Long id, Long senderId, Long recipientId, String content, LocalDateTime timestamp) {
+    public ChatMessageDTO(Integer id, Integer senderId, Integer recipientId, String content, LocalDateTime timestamp) {
         this.id = id;
         this.senderId = senderId;
         this.recipientId = recipientId;
@@ -21,27 +21,28 @@ public class ChatMessageDTO {
         this.timestamp = timestamp;
     }
 
-    public Long getId() {
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getSenderId() {
+    public Integer getSenderId() {
         return senderId;
     }
 
-    public void setSenderId(Long senderId) {
+    public void setSenderId(Integer senderId) {
         this.senderId = senderId;
     }
 
-    public Long getRecipientId() {
+    public Integer getRecipientId() {
         return recipientId;
     }
 
-    public void setRecipientId(Long recipientId) {
+    public void setRecipientId(Integer recipientId) {
         this.recipientId = recipientId;
     }
 
