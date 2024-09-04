@@ -2,6 +2,7 @@ package com.leafresh.backend.market.service;
 
 import com.leafresh.backend.market.model.dto.MarketDTO;
 import com.leafresh.backend.market.model.entity.MarketEntity;
+import com.leafresh.backend.market.model.entity.VisibleScope;
 import com.leafresh.backend.market.repository.MarketRepository;
 import com.leafresh.backend.oauth.model.User;
 import com.leafresh.backend.oauth.repository.UserRepository;
@@ -46,20 +47,21 @@ public class MarketService {
 
     @Transactional
     public MarketDTO createPost(MarketDTO marketDTO, @CurrentUser UserPrincipal userPrincipal) {
-        MarketEntity entity = new MarketEntity();
         Integer userId = userPrincipal.getUserId(); // 인증된 유저의 고유한 id 값
         Optional<User> user = userRepository.findById(userId); // id값을 기준으로 user 객체를 꺼내옴
 
         if (user != null) { // 유저가 존재하면
             String userNickname = user.get().getUserNickname(); // 유저의 닉네임을 가져옴
 
-            entity.setMarketCategory(marketDTO.getMarketCategory());
-            entity.setMarketTitle(marketDTO.getMarketTitle());
-            entity.setMarketContent(marketDTO.getMarketContent());
-            entity.setMarketImage(marketDTO.getMarketImage());
-            entity.setMarketCreatedAt(marketDTO.getMarketCreatedAt());
-            entity.setMarketStatus(true); // 글이 삭제되었을시에 상태는 false
-            entity.setUserNickname(userNickname); // oauth의 User 테이블에서 userNickname을 가져와서 넣어줘야함.
+            MarketEntity entity = new MarketEntity.Builder()
+                    .marketCategory(marketDTO.getMarketCategory())
+                    .marketTitle(marketDTO.getMarketTitle())
+                    .marketContent(marketDTO.getMarketContent())
+                    .marketImage(marketDTO.getMarketImage())
+                    .marketStatus(true) // 등록되었을때는 무조건 분양중인 초기상태로 시작
+                    .marketVisibleScope(VisibleScope.MARKET_PUBLIC)
+                    .userNickname(userNickname)
+                    .build();
             marketRepository.save(entity);
             System.out.println(entity); // 잘 저장되었나 출력
 
@@ -71,6 +73,7 @@ public class MarketService {
             savedDTO.setMarketImage(entity.getMarketImage());
             savedDTO.setMarketCreatedAt(entity.getMarketCreatedAt());
             savedDTO.setMarketStatus(entity.isMarketStatus());
+            savedDTO.setMarketVisibleScope(entity.getMarketVisibleScope());
             savedDTO.setUserNickname(entity.getUserNickname());
 
             return savedDTO;
