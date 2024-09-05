@@ -10,26 +10,30 @@ import java.util.Collections;
 import java.util.List;
 
 public class UserPrincipal implements UserDetails {
-    private Integer userId;  // User 엔티티의 userId에 맞게 수정
+
+    private Integer userId;
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
+    private User user;  // User 객체 추가
 
-    public UserPrincipal(Integer userId, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Integer userId, String email, String password, Collection<? extends GrantedAuthority> authorities, User user) {
         this.userId = userId;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.user = user; // User 객체 초기화
     }
 
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new UserPrincipal(
-                user.getUserId(),  // User 엔티티의 userId 사용
-                user.getUserMailAdress(),  // User 엔티티의 이메일 필드 사용
-                user.getUserPassword(),  // User 엔티티의 비밀번호 필드 사용
-                authorities
+                user.getUserId(),
+                user.getUserMailAdress(),
+                user.getUserPassword(),
+                authorities,
+                user // User 객체 전달
         );
     }
 
@@ -37,8 +41,8 @@ public class UserPrincipal implements UserDetails {
         return userId;
     }
 
-    public String getEmail() {
-        return email;
+    public User getUser() {
+        return user; // User 객체 반환 메서드
     }
 
     @Override
