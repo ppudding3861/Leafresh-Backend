@@ -65,21 +65,43 @@ public class MarketService {
             marketRepository.save(entity);
             System.out.println(entity); // 잘 저장되었나 출력
 
-            MarketDTO savedDTO = new MarketDTO();
-            savedDTO.setMarketId(entity.getMarketId());
-            savedDTO.setMarketCategory(entity.getMarketCategory());
-            savedDTO.setMarketTitle(entity.getMarketTitle());
-            savedDTO.setMarketContent(entity.getMarketContent());
-            savedDTO.setMarketImage(entity.getMarketImage());
-            savedDTO.setMarketCreatedAt(entity.getMarketCreatedAt());
-            savedDTO.setMarketStatus(entity.isMarketStatus());
-            savedDTO.setMarketVisibleScope(entity.getMarketVisibleScope());
-            savedDTO.setUserNickname(entity.getUserNickname());
+            if (entity != null) {
+                MarketDTO savedDTO = new MarketDTO();
+                savedDTO.setMarketId(entity.getMarketId());
+                savedDTO.setMarketCategory(entity.getMarketCategory());
+                savedDTO.setMarketTitle(entity.getMarketTitle());
+                savedDTO.setMarketContent(entity.getMarketContent());
+                savedDTO.setMarketImage(entity.getMarketImage());
+                savedDTO.setMarketCreatedAt(entity.getMarketCreatedAt());
+                savedDTO.setMarketStatus(entity.isMarketStatus());
+                savedDTO.setMarketVisibleScope(entity.getMarketVisibleScope());
+                savedDTO.setUserNickname(entity.getUserNickname());
 
-            return savedDTO;
+                return savedDTO;
+            } else {
+                return null;
+            }
         } else {
             System.out.println("로그인 한 사용자가 없습니다.");
             return null;
         }
+    }
+
+    public MarketDTO detailPost(Integer id) {
+        Optional<MarketEntity> findEntity = marketRepository.findById(id);
+        MarketDTO detailDTO = new MarketDTO();
+
+        if (findEntity.isPresent()) { // 조회된 값이 있으면
+            detailDTO.setMarketId(findEntity.get().getMarketId());
+            detailDTO.setMarketCategory(findEntity.get().getMarketCategory());
+            detailDTO.setMarketTitle(findEntity.get().getMarketTitle());
+            detailDTO.setMarketContent(findEntity.get().getMarketContent());
+            detailDTO.setMarketImage(findEntity.get().getMarketImage());
+            detailDTO.setMarketStatus(findEntity.isPresent());
+            detailDTO.setMarketVisibleScope(findEntity.get().getMarketVisibleScope());
+            detailDTO.setMarketCreatedAt(findEntity.get().getMarketCreatedAt());
+            detailDTO.setUserNickname(findEntity.get().getUserNickname());
+        }
+        return detailDTO;
     }
 }
