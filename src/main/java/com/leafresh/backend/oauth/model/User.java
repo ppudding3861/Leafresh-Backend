@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
-@Getter @Setter
 @Table(name = "users")
 public class User {
 
@@ -60,4 +57,133 @@ public class User {
 
     @Column(name = "image_url", columnDefinition = "TEXT") // URL 길이 제한 제거
     private String imageUrl; // 프로필 이미지 URL
+
+    // Getter와 Setter 메서드들
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserNickname() {
+        return userNickname;
+    }
+
+    public void setUserNickname(String userNickname) {
+        this.userNickname = userNickname;
+    }
+
+    public String getUserPhoneNumber() {
+        return userPhoneNumber;
+    }
+
+    public void setUserPhoneNumber(String userPhoneNumber) {
+        this.userPhoneNumber = userPhoneNumber;
+    }
+
+    public String getUserMailAdress() {
+        return userMailAdress;
+    }
+
+    public void setUserMailAdress(String userMailAdress) {
+        this.userMailAdress = userMailAdress;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public Date getUserJoinDate() {
+        return userJoinDate;
+    }
+
+    public void setUserJoinDate(Date userJoinDate) {
+        this.userJoinDate = userJoinDate;
+    }
+
+    public Date getUserExitDate() {
+        return userExitDate;
+    }
+
+    public void setUserExitDate(Date userExitDate) {
+        this.userExitDate = userExitDate;
+    }
+
+    public int getUserReportCount() {
+        return userReportCount;
+    }
+
+    public void setUserReportCount(int userReportCount) {
+        this.userReportCount = userReportCount;
+    }
+
+    public String getUserExitReason() {
+        return userExitReason;
+    }
+
+    public void setUserExitReason(String userExitReason) {
+        this.userExitReason = userExitReason;
+    }
+
+    public UserStatus getUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    // 기본 생성자
+    public User() {
+    }
+
+    // 모든 필드를 포함하는 생성자
+    public User(Integer userId, String userName, String userNickname, String userPhoneNumber,
+                String userMailAdress, String userPassword, Date userJoinDate, Date userExitDate,
+                int userReportCount, String userExitReason, UserStatus userStatus, Role role, String imageUrl) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userNickname = userNickname;
+        this.userPhoneNumber = userPhoneNumber;
+        this.userMailAdress = userMailAdress;
+        this.userPassword = userPassword;
+        this.userJoinDate = userJoinDate;
+        this.userExitDate = userExitDate;
+        this.userReportCount = userReportCount;
+        this.userExitReason = userExitReason;
+        this.userStatus = userStatus;
+        this.role = role;
+        this.imageUrl = imageUrl;
+    }
 }
