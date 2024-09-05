@@ -1,7 +1,10 @@
 package com.leafresh.backend.chat.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -39,7 +42,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // 클라이언트가 웹소켓 연결을 시작하는 경로로 "/ws" 설정
         // SockJS를 통해 WebSocket을 지원하지 않는 환경에서도 호환성 유지
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("${app.cors.allowedOrigins}")  // 모든 도메인에서의 WebSocket 요청을 허용 (보안을 위해 특정 도메인만 허용하도록 변경 필요)
+                .setAllowedOrigins("http://localhost:8000")  // 허용할 출처를 설정
                 .withSockJS();  // SockJS 활성화: WebSocket을 지원하지 않는 브라우저에 폴백 메커니즘 제공
+    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        // 예외 메시지와 상태 코드 반환
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
     }
 }

@@ -6,8 +6,12 @@ import com.leafresh.backend.chat.model.entity.ChatRoom;
 import com.leafresh.backend.chat.repository.ChatUserRepository;
 import com.leafresh.backend.oauth.model.User;
 import com.leafresh.backend.chat.service.ChatService;
+import com.leafresh.backend.oauth.payload.ApiResponse;
+import com.leafresh.backend.oauth.security.CurrentUser;
+import com.leafresh.backend.oauth.security.UserPrincipal;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -70,7 +74,7 @@ public class ChatController {
         return ResponseEntity.ok(response);
     }
 
-    @MessageMapping("/{roomId}")
+    @MessageMapping("/chat/{roomId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> sendMessage(@DestinationVariable Integer roomId, ChatMessageDTO messageDTO) {
         if (messageDTO.getSenderId() == null || messageDTO.getRecipientId() == null) {
@@ -89,7 +93,7 @@ public class ChatController {
         chatMessage.setTimestamp(LocalDateTime.now());
         chatService.saveMessage(chatMessage);
 
-        messagingTemplate.convertAndSend("/topic/chat/" + roomId, chatMessage);
+        messagingTemplate.convertAndSend("/topic/chat/" + roomId, chatMessage); // 메시지 전송 경로
         return ResponseEntity.ok().build();
     }
 
@@ -135,4 +139,19 @@ public class ChatController {
                 message.getTimestamp()
         );
     }
+    @PostMapping("/chat/create")
+    public ResponseEntity<?> createChatRoom(@RequestBody Map<String, Integer> request, @CurrentUser UserPrincipal userPrincipal) {
+        Integer postId = request.get("postId");
+        Integer userId = userPrincipal.getUserId();
+
+        // 채팅방 생성 로직
+        ChatRoom chatRoom = chatService.createChatRoom(postId, userId);
+
+        if (chatRoom != null) {
+            return ResponseEntity.ok(Map.of("chatRoomId", chatRoom.getId()));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "채팅방 생성 실패"));
+        }
+    }
+
 }
