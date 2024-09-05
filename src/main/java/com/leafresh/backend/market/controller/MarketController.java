@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/market")
@@ -36,16 +38,16 @@ public class MarketController {
             @CurrentUser UserPrincipal userPrincipal){
 
         if (category == null || category.isEmpty()){
-            return ResponseEntity.badRequest().body("카테고리를 선택해주세요.");
+            return ResponseEntity.status(415).body("카테고리를 선택해주세요.");
         }
         if (title == null || title.isEmpty()){
-            return ResponseEntity.badRequest().body("제목을 입력해주세요.");
+            return ResponseEntity.status(415).body("제목을 입력해주세요.");
         }
         if (content == null || content.isEmpty()){
-            return ResponseEntity.badRequest().body("내용을 입력해주세요.");
+            return ResponseEntity.status(415).body("내용을 입력해주세요.");
         }
         if (image == null || image.isEmpty()){
-            return ResponseEntity.badRequest().body("사진을 등록해주세요.");
+            return ResponseEntity.status(415).body("사진을 등록해주세요.");
         }
 
         MarketDTO marketDTO = new MarketDTO();
@@ -59,7 +61,27 @@ public class MarketController {
         if (createdDTO != null) { // 게시글이 잘 저장되었으면
             return ResponseEntity.ok(createdDTO);
         } else {
-            return ResponseEntity.badRequest().body("다시 시도해주세요");
+            return ResponseEntity.status(500).body("다시 시도해주세요");
+        }
+    }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<?> detail(@PathVariable Integer id) {
+        Map<String, Object> response = new HashMap<>();
+
+        if(id <= 0 || id == null) {
+            response.put("error", "다시 시도해주세요.");
+            return ResponseEntity.status(400).body(response);
+        }
+
+        MarketDTO findDTO = marketService.detailPost(id);
+
+        if (findDTO != null) {
+            response.put("post", findDTO);
+            return ResponseEntity.ok(response);
+        }else {
+            response.put("error", "게시글 조회 실패. 다시 시도해주세요.");
+            return ResponseEntity.status(400).body(response);
         }
     }
 }

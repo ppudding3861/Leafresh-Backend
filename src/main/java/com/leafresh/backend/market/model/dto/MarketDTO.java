@@ -5,7 +5,7 @@ import com.leafresh.backend.market.model.entity.VisibleScope;
 import java.time.LocalDateTime;
 
 public class MarketDTO {
-    private int marketId;
+    private Integer marketId;
     private String marketCategory;
     private String marketTitle;
     private String marketContent;
@@ -18,7 +18,7 @@ public class MarketDTO {
     public MarketDTO() {
     }
 
-    public MarketDTO(int marketId, String marketCategory, String marketTitle, String marketContent, String marketImage, boolean marketStatus, VisibleScope marketVisibleScope, LocalDateTime marketCreatedAt, String userNickname) {
+    public MarketDTO(Integer marketId, String marketCategory, String marketTitle, String marketContent, String marketImage, boolean marketStatus, VisibleScope marketVisibleScope, LocalDateTime marketCreatedAt, String userNickname) {
         this.marketId = marketId;
         this.marketCategory = marketCategory;
         this.marketTitle = marketTitle;
@@ -34,7 +34,7 @@ public class MarketDTO {
         return marketId;
     }
 
-    public void setMarketId(int marketId) {
+    public void setMarketId(Integer marketId) {
         this.marketId = marketId;
     }
 
