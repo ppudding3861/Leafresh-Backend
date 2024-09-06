@@ -29,14 +29,23 @@ public class ToDoEntity {
 	@Column(name = "user_id")
 	private Integer userId;
 
+	@Column(name = "todo_status", nullable = false)
+	private String todoStatus = "N"; // 기본값 'N'
+
+	@Column(name = "todo_status2", nullable = false)
+	private boolean todoSatus2 = false;
+
+
 	public ToDoEntity() {
 	}
 
-	public ToDoEntity(Integer todoId, String todoContent, LocalDateTime todoCreateAt, Integer userId) {
+	public ToDoEntity(Integer todoId, String todoContent, LocalDateTime todoCreateAt, Integer userId,
+		String todoStatus) {
 		this.todoId = todoId;
 		this.todoContent = todoContent;
 		this.todoCreateAt = todoCreateAt;
 		this.userId = userId;
+		this.todoStatus = todoStatus;
 	}
 
 	public Integer getTodoId() {
@@ -69,5 +78,13 @@ public class ToDoEntity {
 
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+
+	public String getTodoStatus() {
+		return todoStatus;
+	}
+
+	public void setTodoStatus(String todoStatus) {
+		this.todoStatus = todoStatus;
 	}
 }
