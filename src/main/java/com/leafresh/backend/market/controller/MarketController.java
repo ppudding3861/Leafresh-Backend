@@ -34,7 +34,7 @@ public class MarketController {
             @RequestParam("category") String category,
             @RequestParam("title") String title,
             @RequestParam("content") String content,
-            @RequestParam("image") MultipartFile image,
+            @RequestParam("image") String image,
             @CurrentUser UserPrincipal userPrincipal){
 
         if (category == null || category.isEmpty()){
@@ -54,7 +54,7 @@ public class MarketController {
         marketDTO.setMarketCategory(category);
         marketDTO.setMarketTitle(title);
         marketDTO.setMarketContent(content);
-        marketDTO.setMarketImage(String.valueOf(image));
+        marketDTO.setMarketImage(image);
 
         MarketDTO createdDTO = marketService.createPost(marketDTO, userPrincipal);
 
