@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.leafresh.backend.todo.model.ToDoDTO;
+import com.leafresh.backend.todo.model.ToDoEntity;
 import com.leafresh.backend.todo.service.ToDoService;
 
 @RestController
@@ -53,6 +55,14 @@ public class ToDoController {
 		map.put("todoIndex", toDoDTO);
 		return ResponseEntity.ok(map);
 
+	}
+
+
+	@PutMapping("/update-status/{id}")
+	public ResponseEntity<ToDoEntity> updateToDoStatus(@PathVariable Integer id, @RequestBody String status) {
+		ToDoEntity updateTodo = toDoService.updateTodoStatus(id, status);
+		System.out.println("Received status: " + status);
+		return ResponseEntity.ok(updateTodo);
 	}
 
 

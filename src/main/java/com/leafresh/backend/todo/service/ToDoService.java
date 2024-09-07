@@ -49,7 +49,12 @@ public class ToDoService {
 
 		return new ToDoDTO();
 
+	}
 
+	public ToDoEntity updateTodoStatus(Integer id, String status) {
+		ToDoEntity toDoEntity = todoRepository.findById(id).orElse(null);
+		toDoEntity.setTodoStatus(status);
+		return todoRepository.save(toDoEntity);
 
 
 	}

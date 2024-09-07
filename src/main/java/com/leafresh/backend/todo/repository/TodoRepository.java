@@ -8,5 +8,4 @@ import com.leafresh.backend.todo.model.ToDoEntity;
 @Repository
 public interface TodoRepository extends JpaRepository<ToDoEntity, Integer> {
 
-
 }
