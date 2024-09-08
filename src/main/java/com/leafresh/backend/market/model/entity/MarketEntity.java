@@ -165,6 +165,10 @@ public class MarketEntity {
         return userNickname;
     }
 
+    public void setMarketVisibleScope(VisibleScope marketVisibleScope) {
+        this.marketVisibleScope = marketVisibleScope;
+    }
+
     @Override
     public String toString() {
         return "MarketEntity{" +
