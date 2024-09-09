@@ -62,8 +62,15 @@ public class FtpImgLoaderUtil2 {
             connect(ftpClient);
             setFtpClientConfig(ftpClient);
 
-            String directoryPath = imgUrl.substring(0, imgUrl.lastIndexOf('/'));
-            String fileName = imgUrl.substring(imgUrl.lastIndexOf('/') + 1);
+            int lastSlashIndex = imgUrl.lastIndexOf('/');
+
+            // 경로의 마지막 '/'가 유효하지 않을 경우 예외 처리
+            if (lastSlashIndex == -1) {
+                throw new IllegalArgumentException("이미지 URL이 잘못되었습니다: " + imgUrl);
+            }
+
+            String directoryPath = imgUrl.substring(0, lastSlashIndex);
+            String fileName = imgUrl.substring(lastSlashIndex + 1);
 
             if (!ftpClient.changeWorkingDirectory(directoryPath)) {
                 throw new IOException("디렉토리로 이동할 수 없습니다: " + directoryPath);
