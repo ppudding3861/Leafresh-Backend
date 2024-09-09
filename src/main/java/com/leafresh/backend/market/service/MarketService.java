@@ -11,6 +11,7 @@ import com.leafresh.backend.oauth.security.UserPrincipal;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,5 +104,73 @@ public class MarketService {
             detailDTO.setUserNickname(findEntity.get().getUserNickname());
         }
         return detailDTO;
+    }
+
+    @Transactional
+    public MarketDTO modifyPost(MarketDTO marketDTO, @CurrentUser UserPrincipal userPrincipal) {
+        Integer userId = userPrincipal.getUserId();
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user != null) { // 유저가 존재하면
+            String userNickname = user.get().getUserNickname(); // 유저의 닉네임을 가져옴
+
+            MarketEntity entity = new MarketEntity.Builder()
+                    .marketCategory(marketDTO.getMarketCategory())
+                    .marketTitle(marketDTO.getMarketTitle())
+                    .marketContent(marketDTO.getMarketContent())
+                    .marketImage(marketDTO.getMarketImage())
+                    .marketVisibleScope(VisibleScope.MARKET_PUBLIC)
+                    .userNickname(userNickname)
+                    .build();
+            marketRepository.save(entity);
+            System.out.println(entity); // 잘 저장되었나 출력
+
+            if (entity != null) {
+                MarketDTO savedDTO = new MarketDTO();
+                savedDTO.setMarketId(entity.getMarketId());
+                savedDTO.setMarketCategory(entity.getMarketCategory());
+                savedDTO.setMarketTitle(entity.getMarketTitle());
+                savedDTO.setMarketContent(entity.getMarketContent());
+                savedDTO.setMarketImage(entity.getMarketImage());
+                savedDTO.setMarketCreatedAt(entity.getMarketCreatedAt());
+                savedDTO.setMarketStatus(entity.isMarketStatus());
+                savedDTO.setMarketVisibleScope(entity.getMarketVisibleScope());
+                savedDTO.setUserNickname(entity.getUserNickname());
+
+                return savedDTO;
+            } else {
+                return null;
+            }
+        } else {
+            System.out.println("로그인 한 사용자가 없습니다.");
+            return null;
+        }
+    }
+
+
+    @Transactional
+    public int deletePost(@CurrentUser UserPrincipal userPrincipal, @PathVariable Integer id){
+        Integer userId = userPrincipal.getUserId();
+        Optional<User> user = userRepository.findById(userId); // 유저정보 가져옴
+        Optional<MarketEntity> market = marketRepository.findById(id); // 게시글 데이터 가져옴
+
+        int result = 0;
+
+        if (user.isPresent() && market.isPresent()) { // 유저, 게시글이 존재하면
+            if (market.isPresent()) { // 게시글이 존재하면
+                MarketEntity marketEntity = market.get(); // 게시글 엔티티 가져오기
+                marketEntity.setMarketVisibleScope(VisibleScope.MARKET_DELETE); // 공개범위를 MARKET_DELETE로 수정
+                marketRepository.save(marketEntity);
+                return result;
+            } else {
+                System.out.println("삭제하려는 게시글이 존재하지 않습니다.");
+                result = 1;
+                return result;
+            }
+        } else {
+            System.out.println("로그인 한 사용자가 없습니다.");
+            result = 1;
+            return result;
+        }
     }
 }

@@ -84,4 +84,52 @@ public class MarketController {
             return ResponseEntity.status(400).body(response);
         }
     }
+
+    @PutMapping("/modify/{id}")
+    public ResponseEntity<?> modify (
+            @RequestParam("category") String category,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("image") String image,
+            @CurrentUser UserPrincipal userPrincipal){
+
+        if (category == null || category.isEmpty()){
+            return ResponseEntity.status(415).body("카테고리를 선택해주세요.");
+        }
+        if (title == null || title.isEmpty()){
+            return ResponseEntity.status(415).body("제목을 입력해주세요.");
+        }
+        if (content == null || content.isEmpty()){
+            return ResponseEntity.status(415).body("내용을 입력해주세요.");
+        }
+        if (image == null || image.isEmpty()){
+            return ResponseEntity.status(415).body("사진을 등록해주세요.");
+        }
+
+        MarketDTO marketDTO = new MarketDTO();
+        marketDTO.setMarketCategory(category);
+        marketDTO.setMarketTitle(title);
+        marketDTO.setMarketContent(content);
+        marketDTO.setMarketImage(image);
+
+        MarketDTO modifyDTO = marketService.modifyPost(marketDTO, userPrincipal);
+
+        if (modifyDTO != null) { // 게시글이 잘 저장되었으면
+            return ResponseEntity.ok(modifyDTO);
+        } else {
+            return ResponseEntity.status(500).body("다시 시도해주세요");
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable Integer id){
+        int result = marketService.deletePost(userPrincipal, id);
+
+        if (result == 0) { // 데이터가 잘 삭제되었으면
+            return ResponseEntity.status(200).body("게시글 삭제가 완료되었습니다.");
+        } else {
+            return ResponseEntity.status(500).body("다시 시도해주세요");
+        }
+    }
+
 }
