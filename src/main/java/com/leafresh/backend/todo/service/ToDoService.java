@@ -1,5 +1,6 @@
 package com.leafresh.backend.todo.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class ToDoService {
 			ToDoDTO toDoDTO = new ToDoDTO();
 			toDoDTO.setTodoId(toDoEntity.getTodoId());
 			toDoDTO.setTodoContent(toDoEntity.getTodoContent());
+			toDoDTO.setTodoCreateAt(toDoEntity.getTodoCreateAt());
 
 			toDoDTOs.add(toDoDTO);
 
@@ -55,6 +57,14 @@ public class ToDoService {
 		ToDoEntity toDoEntity = todoRepository.findById(id).orElse(null);
 		toDoEntity.setTodoStatus(status);
 		return todoRepository.save(toDoEntity);
+	}
+
+	public List<ToDoEntity> getTodayTodos() {
+		LocalDate today = LocalDate.now();
+		return todoRepository.findAllByTodoCreateAtBetween(
+			today.atStartOfDay(),
+			today.plusDays(1).atStartOfDay()
+		);
 
 
 	}

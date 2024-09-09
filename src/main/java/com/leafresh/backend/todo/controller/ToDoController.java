@@ -3,6 +3,7 @@ package com.leafresh.backend.todo.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ public class ToDoController {
 		this.toDoService = toDoService;
 	}
 
+	// 전체조회
 	@GetMapping("/")
 	public ResponseEntity<Map<String, Object>> getAllToDos() {
 		Map<String, Object> map = new HashMap<>();
@@ -56,6 +58,30 @@ public class ToDoController {
 		return ResponseEntity.ok(map);
 
 	}
+
+
+	// 오늘날짜 기준으로 보여준다.
+	@GetMapping("/today")
+	public ResponseEntity<Map<String, Object>> getTodayTodos() {
+		Map<String, Object> map = new HashMap<>();
+		List<ToDoEntity> todayTodos = toDoService.getTodayTodos();
+		if (todayTodos != null && !todayTodos.isEmpty()) {
+
+			List<ToDoDTO> toDoDTOS = todayTodos.stream()
+				.map(toDoEntity -> {
+					ToDoDTO dto = new ToDoDTO();
+					dto.setTodoContent(toDoEntity.getTodoContent());
+					return dto;
+				})
+				.collect(Collectors.toList());
+
+			map.put("todoIndex", toDoDTOS);
+			return  ResponseEntity.ok(map);
+		}
+		return ResponseEntity.noContent().build();
+
+	}
+
 
 
 	@PutMapping("/update-status/{id}")
