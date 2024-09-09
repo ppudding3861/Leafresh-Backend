@@ -55,7 +55,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/", "/error").permitAll() // 허용할 경로 설정
                                 .requestMatchers("/auth/**","/login","/signup","/ftp/upload","/ws/**","/ftp/image","/garden-diary/**").permitAll() // 인증 관련 경로 허용
-                                .requestMatchers("/chat/**", "/room/**").hasAnyRole("USER", "ADMIN")// 채팅 관련 엔드포인트 인증 필요
+                                .requestMatchers("/chat/**", "/room/**","/profile/**").hasAnyRole("USER", "ADMIN")// 채팅 관련 엔드포인트 인증 필요
                                 .anyRequest().authenticated()); // 그 외 요청은 인증 필요
 
         // Add our custom Token based authentication filter

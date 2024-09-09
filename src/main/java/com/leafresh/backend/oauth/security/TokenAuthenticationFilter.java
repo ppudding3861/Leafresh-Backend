@@ -41,6 +41,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            }else {
+                logger.error("Invalid JWT Token");
             }
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
@@ -52,8 +54,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            logger.debug("Extracted JWT Token: " + bearerToken.substring(7));
             return bearerToken.substring(7);
         }
+        logger.warn("No JWT token found in request headers.");
         return null;
     }
 }
