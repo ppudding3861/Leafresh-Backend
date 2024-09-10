@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ftp")
@@ -24,7 +25,7 @@ public class FTPController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file) {
         String localFilePath = System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename();
         File localFile = new File(localFilePath);
 
@@ -34,11 +35,13 @@ public class FTPController {
 
             // FTP 서버에 파일 업로드
             String uploadedFilePath = ftpFileUploadService.uploadFile(localFile, file.getOriginalFilename());
-            return ResponseEntity.ok(uploadedFilePath);  // 업로드된 파일 경로 반환
+
+            // JSON 형식으로 응답 반환
+            return ResponseEntity.ok().body(Map.of("uploadedFilePath", uploadedFilePath));
 
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("파일 업로드 실패: " + e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "파일 업로드 실패", "message", e.getMessage()));
         } finally {
             // 로컬에 저장된 파일 삭제
             if (localFile.exists()) {
@@ -46,6 +49,7 @@ public class FTPController {
             }
         }
     }
+
 
     @GetMapping("/image")
     public ResponseEntity<Resource> getImage(@RequestParam("path") String path) {
