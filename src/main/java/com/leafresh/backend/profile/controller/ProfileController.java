@@ -1,18 +1,12 @@
 package com.leafresh.backend.profile.controller;
 
-import com.leafresh.backend.oauth.model.User;
-import com.leafresh.backend.oauth.repository.UserRepository;
-import com.leafresh.backend.profile.model.dto.ProfileDTO;
-import com.leafresh.backend.profile.model.entity.ProfileEntity;
-import com.leafresh.backend.profile.repository.ProfileRepository;
-import com.leafresh.backend.profile.service.ProfileService;
 import com.leafresh.backend.oauth.security.CurrentUser;
 import com.leafresh.backend.oauth.security.UserPrincipal;
+import com.leafresh.backend.profile.model.dto.ProfileDTO;
+import com.leafresh.backend.profile.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/profile")
@@ -27,9 +21,13 @@ public class ProfileController {
         return ResponseEntity.ok().body("프로필이 성공적으로 등록되었습니다.");
     }
 
-    @GetMapping("/check")
-    public ResponseEntity<?> checkProfile(@CurrentUser UserPrincipal userPrincipal) {
-        boolean exists = profileService.checkProfileExists(userPrincipal.getUserId());
-        return ResponseEntity.ok().body(Map.of("exists", exists));
+    @GetMapping("/info")
+    public ResponseEntity<?> getProfileInfo(@CurrentUser UserPrincipal userPrincipal) {
+        try {
+            ProfileDTO profileDTO = profileService.getProfileInfo(userPrincipal.getUserId());
+            return ResponseEntity.ok(profileDTO); // 프로필 정보 반환
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("정보가 없습니다."); // 프로필이 없는 경우 에러 메시지 반환
+        }
     }
 }
