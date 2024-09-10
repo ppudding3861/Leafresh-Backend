@@ -17,7 +17,7 @@ public class ProfileService {
     @Autowired
     private UserRepository userRepository;
 
-    public void createProfile(Integer userId, ProfileDTO profileDTO) {
+    public ProfileDTO createProfile(Integer userId, ProfileDTO profileDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
@@ -26,11 +26,22 @@ public class ProfileService {
         profileEntity.setProfileTitle(profileDTO.getProfileTitle());
         profileEntity.setProfileDescription(profileDTO.getProfileDescription());
 
-        profileRepository.save(profileEntity);
+        ProfileEntity savedProfile = profileRepository.save(profileEntity);
+
+        ProfileDTO createdProfileDTO = new ProfileDTO();
+        createdProfileDTO.setProfileTitle(savedProfile.getProfileTitle());
+        createdProfileDTO.setProfileDescription(savedProfile.getProfileDescription());
+
+        return createdProfileDTO;
     }
 
-    public boolean checkProfileExists(Integer userId) {
-        return profileRepository.existsByUserUserId(userId); // 수정된 메서드 이름 사용
-    }
+    public ProfileDTO getProfileInfo(Integer userId) {
+        ProfileEntity profileEntity = profileRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("프로필이 존재하지 않습니다."));
 
+        ProfileDTO profileDTO = new ProfileDTO();
+        profileDTO.setProfileTitle(profileEntity.getProfileTitle());
+        profileDTO.setProfileDescription(profileEntity.getProfileDescription());
+        return profileDTO;
+    }
 }
