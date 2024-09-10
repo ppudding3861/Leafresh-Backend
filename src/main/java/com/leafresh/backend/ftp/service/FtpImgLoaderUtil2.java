@@ -44,8 +44,9 @@ public class FtpImgLoaderUtil2 {
                 boolean uploadResult = ftpClient.storeFile(fileName, inputStream);
                 if (uploadResult) {
                     filePath.add(fileName);
-                    log.debug("파일 업로드 완료: {}", fileName);
-                    return String.join("/", filePath);
+                    String uploadedFilePath = String.join("/", filePath);
+                    log.debug("파일 업로드 완료: {}", uploadedFilePath);
+                    return uploadedFilePath;  // 업로드된 파일 경로 반환
                 } else {
                     log.error("파일 업로드 실패: {}", fileName);
                     throw new IOException("FTP 파일 업로드 실패: " + fileName);
@@ -63,8 +64,6 @@ public class FtpImgLoaderUtil2 {
             setFtpClientConfig(ftpClient);
 
             int lastSlashIndex = imgUrl.lastIndexOf('/');
-
-            // 경로의 마지막 '/'가 유효하지 않을 경우 예외 처리
             if (lastSlashIndex == -1) {
                 throw new IllegalArgumentException("이미지 URL이 잘못되었습니다: " + imgUrl);
             }
@@ -96,13 +95,19 @@ public class FtpImgLoaderUtil2 {
         FTPClient ftpClient = new FTPClient();
         try {
             connect(ftpClient);
-            return ftpClient.deleteFile(imgUrl);
+            if (ftpClient.deleteFile(imgUrl)) {
+                log.debug("파일 삭제 완료: {}", imgUrl);
+                return true;
+            } else {
+                log.error("파일 삭제 실패: {}", imgUrl);
+                return false;
+            }
         } finally {
             disconnect(ftpClient);
         }
     }
 
-    public boolean connect(FTPClient ftpClient) throws IOException {
+    private boolean connect(FTPClient ftpClient) throws IOException {
         log.debug("connecting to... {}", host);
         ftpClient.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out), true));
         ftpClient.connect(host, port);
@@ -118,7 +123,7 @@ public class FtpImgLoaderUtil2 {
         return ftpClient.login(user, password);
     }
 
-    public void disconnect(FTPClient ftpClient) {
+    private void disconnect(FTPClient ftpClient) {
         if (ftpClient.isConnected()) {
             try {
                 ftpClient.logout();
@@ -130,13 +135,13 @@ public class FtpImgLoaderUtil2 {
         }
     }
 
-    public void setFtpClientConfig(FTPClient ftpClient) throws IOException {
+    private void setFtpClientConfig(FTPClient ftpClient) throws IOException {
         ftpClient.enterLocalPassiveMode();
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         ftpClient.setAutodetectUTF8(true);
     }
 
-    public List<String> mkDirByRequestUri(String servletPath, FTPClient ftpClient) throws IOException {
+    private List<String> mkDirByRequestUri(String servletPath, FTPClient ftpClient) throws IOException {
         List<String> result = new ArrayList<>();
         List<String> paths = Arrays.asList(servletPath.split("/"));
 
@@ -146,7 +151,6 @@ public class FtpImgLoaderUtil2 {
                 continue;
             }
 
-            // 디렉토리 이름을 영문으로 변환
             String englishPath = convertToEnglish(path);
             result.add(englishPath);
 
@@ -162,6 +166,6 @@ public class FtpImgLoaderUtil2 {
     }
 
     private String convertToEnglish(String originalFileName) {
-        return originalFileName.replaceAll("[^a-zA-Z0-9.]", "_"); // 한글을 _로 대체
+        return originalFileName.replaceAll("[^a-zA-Z0-9.]", "_");
     }
 }

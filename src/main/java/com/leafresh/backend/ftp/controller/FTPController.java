@@ -24,7 +24,7 @@ public class FTPController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         String localFilePath = System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename();
         File localFile = new File(localFilePath);
 
@@ -33,12 +33,12 @@ public class FTPController {
             file.transferTo(localFile);
 
             // FTP 서버에 파일 업로드
-            String result = ftpFileUploadService.uploadFile(localFile, file.getOriginalFilename());
-            return "파일 업로드 성공: " + result;
+            String uploadedFilePath = ftpFileUploadService.uploadFile(localFile, file.getOriginalFilename());
+            return ResponseEntity.ok(uploadedFilePath);  // 업로드된 파일 경로 반환
 
         } catch (IOException e) {
             e.printStackTrace();
-            return "파일 업로드 실패: " + e.getMessage();
+            return ResponseEntity.status(500).body("파일 업로드 실패: " + e.getMessage());
         } finally {
             // 로컬에 저장된 파일 삭제
             if (localFile.exists()) {
@@ -55,12 +55,27 @@ public class FTPController {
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG) // 이미지 타입 지정
+                    .contentType(MediaType.IMAGE_JPEG)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                     .body(resource);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteFile(@RequestParam("path") String path) {
+        try {
+            boolean isDeleted = ftpFileUploadService.delete(path);
+            if (isDeleted) {
+                return ResponseEntity.ok("파일 삭제 성공");
+            } else {
+                return ResponseEntity.status(404).body("파일 삭제 실패: 파일을 찾을 수 없습니다.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("파일 삭제 중 오류 발생: " + e.getMessage());
         }
     }
 
