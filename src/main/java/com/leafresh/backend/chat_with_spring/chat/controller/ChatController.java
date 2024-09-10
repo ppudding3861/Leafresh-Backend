@@ -1,6 +1,7 @@
-package com.leafresh.backend.chat_with_spring.chat;
+package com.leafresh.backend.chat_with_spring.chat.controller;
 
 import com.leafresh.backend.chat_with_spring.chat.model.ChatMessage;
+import com.leafresh.backend.chat_with_spring.chat.service.ChatMessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -13,20 +14,23 @@ import java.util.List;
 
 @RestController
 public class ChatController {
-    private final SimpMessageSendingOperations messageSendingOperations;
-    private final ChatMessageRepository chatMessageRepository;
 
-    public ChatController(SimpMessageSendingOperations messageSendingOperations, ChatMessageRepository chatMessageRepository) {
+    private final SimpMessageSendingOperations messageSendingOperations;
+    private final ChatMessageService chatMessageService;
+
+    public ChatController(SimpMessageSendingOperations messageSendingOperations, ChatMessageService chatMessageService) {
         this.messageSendingOperations = messageSendingOperations;
-        this.chatMessageRepository = chatMessageRepository;
+        this.chatMessageService = chatMessageService;
     }
 
-    @GetMapping("/chat/{id}")
-    public ResponseEntity<List<ChatMessage>> getChatMessages(@PathVariable Long id) {
-        List<ChatMessage> messages = chatMessageRepository.findByChatRoomId(id);
+    // 특정 채팅방의 메시지 조회
+    @GetMapping("/chatroom/{chatRoomId}/messages")
+    public ResponseEntity<List<ChatMessage>> getMessages(@PathVariable Long chatRoomId) {
+        List<ChatMessage> messages = chatMessageService.getMessagesByChatRoomId(chatRoomId);
         return ResponseEntity.ok(messages);
     }
 
+    // 새 메시지 수신 및 저장
     @MessageMapping("/message")
     public void receiveMessage(@Payload ChatMessage chatMessage) {
         if (chatMessage.getChatRoomId() == null) {
@@ -34,18 +38,19 @@ public class ChatController {
             return;
         }
 
-        System.out.println("수신한 메시지: " + chatMessage); // 로그 추가
+        System.out.println("수신한 메시지: " + chatMessage);
+
+        // 메시지를 해당 채팅방으로 전송
         String chatRoomId = chatMessage.getChatRoomId().toString();
         messageSendingOperations.convertAndSend("/sub/chatroom/" + chatRoomId, chatMessage);
 
         // 메시지 저장
         try {
-            ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
-            System.out.println("저장된 메시지: " + savedMessage); // 로그 추가
+            ChatMessage savedMessage = chatMessageService.saveMessage(chatMessage);
+            System.out.println("저장된 메시지: " + savedMessage);
         } catch (Exception e) {
             System.err.println("메시지 저장 오류: " + e.getMessage());
             e.printStackTrace();
         }
     }
-
 }
