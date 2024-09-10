@@ -22,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -54,6 +55,13 @@ public class CustomUserDetailsService implements UserDetailsService {
                 );
 
         return UserPrincipal.create(user);
+    }
+
+    // 새로운 메서드 추가: User 엔티티 직접 반환
+    @Transactional
+    public User loadUserEntityById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 
     @Transactional
@@ -89,5 +97,39 @@ public class CustomUserDetailsService implements UserDetailsService {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "회원가입 중 오류가 발생했습니다: " + e.getMessage()));
         }
+    }
+
+    // 비밀번호 검증 메서드 추가
+    @Transactional
+    public boolean verifyPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getUserPassword());
+    }
+
+    // 사용자 정보 업데이트 메서드 수정
+    @Transactional
+    public User updateUser(Integer userId, Map<String, String> updates) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        if (updates.containsKey("newNickname")) {
+            String newNickname = updates.get("newNickname");
+            if (newNickname != null && !newNickname.trim().isEmpty()) {
+                user.setUserNickname(newNickname);
+            }
+        }
+
+        if (updates.containsKey("newPassword")) {
+            String newPassword = updates.get("newPassword");
+            if (newPassword != null && !newPassword.trim().isEmpty()) {
+                user.setUserPassword(passwordEncoder.encode(newPassword));
+            }
+        }
+
+        if (updates.containsKey("newImageUrl")) {
+            String newImageUrl = updates.get("newImageUrl");
+            user.setImageUrl(newImageUrl);
+        }
+
+        return userRepository.save(user);
     }
 }
