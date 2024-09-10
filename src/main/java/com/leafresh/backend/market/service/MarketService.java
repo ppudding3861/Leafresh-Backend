@@ -8,6 +8,7 @@ import com.leafresh.backend.oauth.model.User;
 import com.leafresh.backend.oauth.repository.UserRepository;
 import com.leafresh.backend.oauth.security.CurrentUser;
 import com.leafresh.backend.oauth.security.UserPrincipal;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -180,6 +181,20 @@ public class MarketService {
             System.out.println("로그인 한 사용자가 없습니다.");
             result = 1;
             return result;
+        }
+    }
+
+    @Transactional
+    public void updateMarketStatus(Integer id, Boolean status) {
+        Optional<MarketEntity> marketEntity = marketRepository.findById(id);
+
+        if (marketEntity.isPresent()) { // 게시글이 존재하면
+            System.out.println(marketEntity);
+            MarketEntity market = marketEntity.get();
+            market.setMarketStatus(!status);
+            marketRepository.save(market);
+        } else {
+            System.out.println("게시글이 존재하지 않습니다.");
         }
     }
 }
