@@ -5,8 +5,10 @@ import com.leafresh.backend.market.model.entity.VisibleScope;
 import com.leafresh.backend.market.service.MarketService;
 import com.leafresh.backend.oauth.security.CurrentUser;
 import com.leafresh.backend.oauth.security.UserPrincipal;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -143,6 +145,20 @@ public class MarketController {
             return ResponseEntity.status(200).body("게시글 삭제가 완료되었습니다.");
         } else {
             return ResponseEntity.status(500).body("다시 시도해주세요");
+        }
+    }
+
+    @PutMapping("/update-status/{id}")
+    public ResponseEntity<?> updateStatus (@RequestParam("status") Boolean status, @PathVariable Integer id) {
+        try {
+            marketService.updateMarketStatus(id, status);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "상태가 업데이트되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "게시글을 찾을 수 없습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "서버 오류가 발생했습니다."));
         }
     }
 
