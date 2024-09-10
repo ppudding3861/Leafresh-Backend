@@ -121,6 +121,46 @@ public class MarketEntity {
         }
     }
 
+    public void setMarketId(Integer marketId) {
+        this.marketId = marketId;
+    }
+
+    public void setMarketCategory(String marketCategory) {
+        this.marketCategory = marketCategory;
+    }
+
+    public void setMarketTitle(String marketTitle) {
+        this.marketTitle = marketTitle;
+    }
+
+    public void setMarketContent(String marketContent) {
+        this.marketContent = marketContent;
+    }
+
+    public void setMarketImage(String marketImage) {
+        this.marketImage = marketImage;
+    }
+
+    public void setMarketCreatedAt(LocalDateTime marketCreatedAt) {
+        this.marketCreatedAt = marketCreatedAt;
+    }
+
+    public void setMarketUpdatedAt(LocalDateTime marketUpdatedAt) {
+        this.marketUpdatedAt = marketUpdatedAt;
+    }
+
+    public void setMarketComplatedAt(LocalDateTime marketComplatedAt) {
+        this.marketComplatedAt = marketComplatedAt;
+    }
+
+    public void setMarketStatus(boolean marketStatus) {
+        this.marketStatus = marketStatus;
+    }
+
+    public void setUserNickname(String userNickname) {
+        this.userNickname = userNickname;
+    }
+
     public Integer getMarketId() {
         return marketId;
     }
