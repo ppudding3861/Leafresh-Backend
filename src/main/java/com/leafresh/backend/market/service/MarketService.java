@@ -41,6 +41,8 @@ public class MarketService {
             dto.setMarketImage(entity.getMarketImage());
             dto.setMarketStatus(entity.isMarketStatus());
             dto.setMarketCreatedAt(entity.getMarketCreatedAt());
+            dto.setMarketVisibleScope(entity.getMarketVisibleScope());
+            dto.setUserNickname(entity.getUserNickname());
             marketList.add(dto);
         }
         return marketList;
@@ -60,7 +62,7 @@ public class MarketService {
                     .marketContent(marketDTO.getMarketContent())
                     .marketImage(marketDTO.getMarketImage())
                     .marketStatus(true) // 등록되었을때는 무조건 분양중인 초기상태로 시작
-                    .marketVisibleScope(VisibleScope.MARKET_PUBLIC)
+                    .marketVisibleScope(marketDTO.getMarketVisibleScope())
                     .userNickname(userNickname)
                     .build();
             marketRepository.save(entity);
@@ -107,38 +109,45 @@ public class MarketService {
     }
 
     @Transactional
-    public MarketDTO modifyPost(MarketDTO marketDTO, @CurrentUser UserPrincipal userPrincipal) {
+    public MarketDTO modifyPost(MarketDTO marketDTO, @CurrentUser UserPrincipal userPrincipal, Integer id) {
         Integer userId = userPrincipal.getUserId();
         Optional<User> user = userRepository.findById(userId);
+        Optional<MarketEntity> marketEntity = marketRepository.findById(id);
 
         if (user != null) { // 유저가 존재하면
-            String userNickname = user.get().getUserNickname(); // 유저의 닉네임을 가져옴
+            if (marketEntity.isPresent()) { // 게시글이 존재하면
+                MarketEntity market = marketEntity.get();
+                String userNickname = user.get().getUserNickname(); // 유저의 닉네임을 가져옴
 
-            MarketEntity entity = new MarketEntity.Builder()
-                    .marketCategory(marketDTO.getMarketCategory())
-                    .marketTitle(marketDTO.getMarketTitle())
-                    .marketContent(marketDTO.getMarketContent())
-                    .marketImage(marketDTO.getMarketImage())
-                    .marketVisibleScope(VisibleScope.MARKET_PUBLIC)
-                    .userNickname(userNickname)
-                    .build();
-            marketRepository.save(entity);
-            System.out.println(entity); // 잘 저장되었나 출력
+                market.setMarketCategory(marketDTO.getMarketCategory());
+                market.setMarketTitle(marketDTO.getMarketTitle());
+                market.setMarketContent(marketDTO.getMarketContent());
+                market.setMarketImage(marketDTO.getMarketImage());
+                market.setMarketStatus(marketDTO.isMarketStatus());
+                market.setMarketVisibleScope(marketDTO.getMarketVisibleScope());
+                market.setUserNickname(userNickname);
 
-            if (entity != null) {
-                MarketDTO savedDTO = new MarketDTO();
-                savedDTO.setMarketId(entity.getMarketId());
-                savedDTO.setMarketCategory(entity.getMarketCategory());
-                savedDTO.setMarketTitle(entity.getMarketTitle());
-                savedDTO.setMarketContent(entity.getMarketContent());
-                savedDTO.setMarketImage(entity.getMarketImage());
-                savedDTO.setMarketCreatedAt(entity.getMarketCreatedAt());
-                savedDTO.setMarketStatus(entity.isMarketStatus());
-                savedDTO.setMarketVisibleScope(entity.getMarketVisibleScope());
-                savedDTO.setUserNickname(entity.getUserNickname());
+                marketRepository.save(market);
+                System.out.println("수정완료 : "+market); // 수정이 잘 되었는지 확인
 
-                return savedDTO;
+                if (market != null) {
+                    MarketDTO savedDTO = new MarketDTO();
+                    savedDTO.setMarketId(market.getMarketId());
+                    savedDTO.setMarketCategory(market.getMarketCategory());
+                    savedDTO.setMarketTitle(market.getMarketTitle());
+                    savedDTO.setMarketContent(market.getMarketContent());
+                    savedDTO.setMarketImage(market.getMarketImage());
+                    savedDTO.setMarketCreatedAt(market.getMarketCreatedAt());
+                    savedDTO.setMarketStatus(market.isMarketStatus());
+                    savedDTO.setMarketVisibleScope(market.getMarketVisibleScope());
+                    savedDTO.setUserNickname(market.getUserNickname());
+
+                    return savedDTO;
+                } else {
+                    return null;
+                }
             } else {
+                System.out.println("수정할 게시글이 존재하지 않습니다.");
                 return null;
             }
         } else {

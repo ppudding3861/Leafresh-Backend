@@ -1,6 +1,7 @@
 package com.leafresh.backend.market.controller;
 
 import com.leafresh.backend.market.model.dto.MarketDTO;
+import com.leafresh.backend.market.model.entity.VisibleScope;
 import com.leafresh.backend.market.service.MarketService;
 import com.leafresh.backend.oauth.security.CurrentUser;
 import com.leafresh.backend.oauth.security.UserPrincipal;
@@ -35,6 +36,7 @@ public class MarketController {
             @RequestParam("title") String title,
             @RequestParam("content") String content,
             @RequestParam("image") String image,
+            @RequestParam("visibleScope") VisibleScope visibleScope,
             @CurrentUser UserPrincipal userPrincipal){
 
         if (category == null || category.isEmpty()){
@@ -49,12 +51,16 @@ public class MarketController {
         if (image == null || image.isEmpty()){
             return ResponseEntity.status(415).body("사진을 등록해주세요.");
         }
+        if (visibleScope == null || image.isEmpty()){
+            return ResponseEntity.status(415).body("공개범위를 선택해주세요.");
+        }
 
         MarketDTO marketDTO = new MarketDTO();
         marketDTO.setMarketCategory(category);
         marketDTO.setMarketTitle(title);
         marketDTO.setMarketContent(content);
         marketDTO.setMarketImage(image);
+        marketDTO.setMarketVisibleScope(visibleScope);
 
         MarketDTO createdDTO = marketService.createPost(marketDTO, userPrincipal);
 
@@ -91,6 +97,9 @@ public class MarketController {
             @RequestParam("title") String title,
             @RequestParam("content") String content,
             @RequestParam("image") String image,
+            @RequestParam("visibleScope") VisibleScope visibleScope,
+            @RequestParam("status") Boolean status,
+            @PathVariable Integer id,
             @CurrentUser UserPrincipal userPrincipal){
 
         if (category == null || category.isEmpty()){
@@ -105,14 +114,19 @@ public class MarketController {
         if (image == null || image.isEmpty()){
             return ResponseEntity.status(415).body("사진을 등록해주세요.");
         }
+        if (visibleScope == null || image.isEmpty()){
+            return ResponseEntity.status(415).body("공개범위를 선택해주세요.");
+        }
 
         MarketDTO marketDTO = new MarketDTO();
         marketDTO.setMarketCategory(category);
         marketDTO.setMarketTitle(title);
         marketDTO.setMarketContent(content);
         marketDTO.setMarketImage(image);
+        marketDTO.setMarketVisibleScope(visibleScope);
+        marketDTO.setMarketStatus(status);
 
-        MarketDTO modifyDTO = marketService.modifyPost(marketDTO, userPrincipal);
+        MarketDTO modifyDTO = marketService.modifyPost(marketDTO, userPrincipal, id);
 
         if (modifyDTO != null) { // 게시글이 잘 저장되었으면
             return ResponseEntity.ok(modifyDTO);
