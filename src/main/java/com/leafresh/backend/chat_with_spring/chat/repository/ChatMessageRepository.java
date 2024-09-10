@@ -1,4 +1,4 @@
-package com.leafresh.backend.chat_with_spring.chat;
+package com.leafresh.backend.chat_with_spring.chat.repository;
 
 
 import com.leafresh.backend.chat_with_spring.chat.model.ChatMessage;
