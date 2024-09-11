@@ -1,0 +1,65 @@
+package com.leafresh.backend.plantcare.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.leafresh.backend.plantcare.model.PlantCareDTO;
+import com.leafresh.backend.plantcare.model.PlantCareEntity;
+import com.leafresh.backend.plantcare.repository.PlantCareRepository;
+
+@Service
+public class PlantCareService {
+
+	private PlantCareRepository plantCareRepository;
+
+	@Autowired
+	public PlantCareService(PlantCareRepository plantCareRepository) {
+		this.plantCareRepository = plantCareRepository;
+	}
+
+	// 데이터 저장
+	// 아이디랑 선택 날짜가 같으면 update, 아님 새롭게 저장!
+	public PlantCareEntity saveOrUpdatePlantCare(PlantCareDTO plantCareDTO) {
+
+		Optional<PlantCareEntity> existingRecord = plantCareRepository.findBySelectedDateAndUserId(
+			plantCareDTO.getSelectedDate(), plantCareDTO.getUserId()
+		);
+
+		PlantCareEntity plantCareEntity;
+		if (existingRecord.isPresent()) {
+			plantCareEntity = existingRecord.get();
+			plantCareEntity.setWater(plantCareDTO.getWater());
+			plantCareEntity.setSunlight(plantCareDTO.getSunlight());
+			plantCareEntity.setVentilation(plantCareDTO.isVentilation());
+			plantCareEntity.setCover(plantCareDTO.isCover());
+			plantCareEntity.setNutrients(plantCareDTO.isNutrients());
+
+		}else {
+			plantCareEntity = new PlantCareEntity();
+			plantCareEntity.setWater(plantCareDTO.getWater());
+			plantCareEntity.setSunlight(plantCareDTO.getSunlight());
+			plantCareEntity.setVentilation(plantCareDTO.isVentilation());
+			plantCareEntity.setCover(plantCareDTO.isCover());
+			plantCareEntity.setNutrients(plantCareDTO.isNutrients());
+			plantCareEntity.setUserId(plantCareDTO.getUserId());
+			plantCareEntity.setSelectedDate(plantCareDTO.getSelectedDate());
+
+
+		}
+
+		return plantCareRepository.save(plantCareEntity);
+	}
+
+	public List<PlantCareEntity> getEventsByUserId(Integer userId) {
+
+		return plantCareRepository.findAllByUserId(userId);
+	}
+
+	public List<PlantCareEntity> getAllEvents() {
+		return plantCareRepository.findAll(); // 모든 PlantCareEntity 가져오기
+	}
+}
+
