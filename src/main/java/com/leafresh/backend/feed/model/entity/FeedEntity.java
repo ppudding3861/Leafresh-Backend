@@ -61,7 +61,13 @@ public class FeedEntity {
 	@Positive
 	private Integer userId;
 
-	@Column(name = "user_nickname", nullable = false, length = 255)
+	@Column(name = "user_name")
+	private String userName;
+
+	@Column(name = "user_nickname")
 	private String userNickname; // 추가된 필드: user_nickname
+
+	@Column(name = "user_profile_img")
+	private String userProfileImg;
 }
 
