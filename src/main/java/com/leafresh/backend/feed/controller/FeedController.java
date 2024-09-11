@@ -36,6 +36,13 @@ public class FeedController {
 			.orElse(ResponseEntity.notFound().build());
 	}
 
+	// 유저의 닉네임을 기반으로 조회
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<List<FeedDTO>> getFeedsByUserId(@PathVariable Integer userId) {
+		List<FeedDTO> feeds = feedService.getFeedsByUserId(userId);
+		return ResponseEntity.ok(feeds);
+	}
+
 	// 피드전체조회
 	@GetMapping
 	public ResponseEntity<List<FeedDTO>> getAllFeeds() {

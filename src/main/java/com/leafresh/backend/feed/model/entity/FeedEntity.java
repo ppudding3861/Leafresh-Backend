@@ -29,7 +29,6 @@ public class FeedEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "feed_id")
-	@NotNull(message = "피드id는 null이 될 수 없습니다.")
 	@Positive
 	private Integer feedId;
 
@@ -43,7 +42,6 @@ public class FeedEntity {
 	private String feedImage;
 
 	@Column(name = "feed_create_at")
-	@NotNull(message = "피드생성시간은 null이 될 수 없습니다.")
 	@CreationTimestamp // 생성시 시간을 자동으로 찍어줌
 	private LocalDateTime feedCreateAt;
 
@@ -57,11 +55,9 @@ public class FeedEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "feed_status")
-	@NotNull(message = "피드상태는 null이 될 수 없습니다.")
-	private FeedStatus feedStatus;
+	private FeedStatus feedStatus = FeedStatus.FEED_ACTIVE;
 
 	@Column(name = "user_id")
-	@NotNull(message = "유저id는 null이 될 수 없습니다.")
 	@Positive
 	private Integer userId;
 }

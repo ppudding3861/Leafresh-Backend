@@ -35,6 +35,15 @@ public class FeedService {
 		return feedEntity.map(this::convertToDTO);
 	}
 
+	// 사용자 ID 기반 피드 조회 - DELETE_FEED 상태 제외
+	@Transactional
+	public List<FeedDTO> getFeedsByUserId(Integer userId) {
+		List<FeedEntity> feedEntities = feedRepository.findByUserIdAndFeedStatusNot(userId, FeedStatus.FEED_DELETE);
+		return feedEntities.stream()
+			.map(this::convertToDTO)
+			.collect(Collectors.toList());
+	}
+
 	// 피드전체조회 - DELETE_FEED 상태 제외
 	@Transactional
 	public List<FeedDTO> getAllFeeds() {
