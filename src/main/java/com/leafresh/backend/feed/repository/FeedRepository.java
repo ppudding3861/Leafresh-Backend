@@ -23,4 +23,7 @@ public interface FeedRepository extends JpaRepository<FeedEntity, Integer> {
 
 	// 사용자 ID와 피드 상태가 삭제되지 않은 피드 조회
 	List<FeedEntity> findByUserIdAndFeedStatusNot(Integer userId, FeedStatus feedStatus);
+
+	// 사용자 이름과 피드 상태가 삭제되지 않은 피드 조회
+	List<FeedEntity> findByUserNicknameAndFeedStatusNot(String userNickname, FeedStatus feedStatus);
 }

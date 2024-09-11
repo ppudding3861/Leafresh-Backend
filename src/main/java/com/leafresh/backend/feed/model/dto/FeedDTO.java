@@ -34,6 +34,7 @@ public class FeedDTO {
 
 	private FeedStatus feedStatus = FeedStatus.FEED_ACTIVE;
 
-	@NotNull(message = "유저id는 null이 될 수 없습니다.")
 	private Integer userId;
+
+	private String userNickname;
 }

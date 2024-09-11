@@ -44,6 +44,15 @@ public class FeedService {
 			.collect(Collectors.toList());
 	}
 
+	// 사용자 닉네임 기반 피드 조회 - DELETE_FEED 상태 제외
+	@Transactional
+	public List<FeedDTO> getFeedsByUsername(String userNickname) {
+		List<FeedEntity> feedEntities = feedRepository.findByUserNicknameAndFeedStatusNot(userNickname, FeedStatus.FEED_DELETE);
+		return feedEntities.stream()
+			.map(this::convertToDTO)
+			.collect(Collectors.toList());
+	}
+
 	// 피드전체조회 - DELETE_FEED 상태 제외
 	@Transactional
 	public List<FeedDTO> getAllFeeds() {
