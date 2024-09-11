@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 public class SignUpRequest {
 
     @NotBlank
-    @Size(max = 40)  // 이름의 최대 길이 제한
+    @Size(max = 6)  // 이름의 최대 길이 제한
     private String name;
 
     @NotBlank
@@ -29,6 +29,8 @@ public class SignUpRequest {
     private String phoneNumber;  // 전화번호를 String 타입으로 유지
 
     private String imageUrl;  // 이미지 URL 필드, 길이 제한 없음
+
+    private boolean isTermsAgreement;
 
     // Getter 메서드
     public String getName() {
@@ -55,7 +57,12 @@ public class SignUpRequest {
         return imageUrl;
     }
 
+    public boolean isTermsAgreement() {
+        return isTermsAgreement;
+    }
+
     // Setter 메서드
+
     public void setName(String name) {
         this.name = name;
     }
@@ -78,5 +85,9 @@ public class SignUpRequest {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void setTermsAgreement(boolean termsAgreement) {
+        isTermsAgreement = termsAgreement;
     }
 }

@@ -1,10 +1,14 @@
+
 package com.leafresh.backend.oauth.controller;
 
+import com.leafresh.backend.oauth.exception.BadRequestException;
 import com.leafresh.backend.oauth.model.User;
 import com.leafresh.backend.oauth.payload.ApiResponse;
 import com.leafresh.backend.oauth.payload.AuthResponse;
 import com.leafresh.backend.oauth.payload.LoginRequest;
 import com.leafresh.backend.oauth.payload.SignUpRequest;
+import com.leafresh.backend.oauth.repository.UserRepository;
+import com.leafresh.backend.oauth.security.CurrentUser;
 import com.leafresh.backend.oauth.security.UserPrincipal;
 import com.leafresh.backend.oauth.service.CustomUserDetailsService;
 import com.leafresh.backend.oauth.service.TokenProvider;
@@ -31,11 +35,11 @@ public class AuthController {
     private TokenProvider tokenProvider;
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService; // CustomUserDetailsService 주입
+    private CustomUserDetailsService customUserDetailsService;
 
-    /**
-     * 사용자 로그인 처리
-     */
+    @Autowired
+    private UserRepository userRepository; // UserRepository 주입 추가
+
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -50,44 +54,39 @@ public class AuthController {
         String accessToken = tokenProvider.createToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(((UserPrincipal) authentication.getPrincipal()).getUserId());
 
-        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken)); // 리프레시 토큰 추가
+        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
     }
 
-    /**
-     * 회원가입 처리
-     */
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        // 회원가입 로직을 CustomUserDetailsService의 registerUser 메서드로 위임
+        if (userRepository.existsByUserMailAdress(signUpRequest.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(false, "중복된 이메일 입니다"));
+        }else if (!signUpRequest.isTermsAgreement()) {
+            throw new BadRequestException("약관에 동의해야 합니다.");
+        }
+
+
         return customUserDetailsService.registerUser(signUpRequest);
     }
 
-    /**
-     * 사용자 로그아웃 처리
-     */
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser() {
-        // 클라이언트에서 로그아웃 처리를 위한 간단한 응답 반환
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok(new ApiResponse(true, "사용자가 성공적으로 로그아웃되었습니다."));
     }
 
-    /**
-     * 토큰 유효성 검사 후 리프레시 토큰을 통해 토큰 재생성
-     * */
     @PostMapping("/check-token")
     public ResponseEntity<?> validateOrRefreshToken(@RequestHeader("Authorization") String tokenHeader,
                                                     @RequestBody(required = false) Map<String, String> request) {
         String token = tokenHeader.replace("Bearer ", "");
 
         if (tokenProvider.validateToken(token)) {
-            return ResponseEntity.ok().build(); // 액세스 토큰이 유효한 경우
+            return ResponseEntity.ok().build();
         } else {
-            // 액세스 토큰이 만료되었거나 유효하지 않음
             if (request != null && request.containsKey("refreshToken")) {
                 String refreshToken = request.get("refreshToken");
 
-                // 리프레시 토큰 유효성 검사 및 액세스 토큰 재발급
                 if (tokenProvider.validateRefreshToken(refreshToken)) {
                     try {
                         String newAccessToken = tokenProvider.refreshAccessToken(refreshToken);
@@ -106,4 +105,5 @@ public class AuthController {
             }
         }
     }
+
 }
