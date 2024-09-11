@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.leafresh.backend.plantcare.model.PlantCareDTO;
@@ -42,17 +43,18 @@ public class PlantCareController {
 	}
 
 
-	// 모든 plantCare 이벤트를 반환하도록 수정
+	// userId별로 이벤트를 반환하도록 수정
 	@GetMapping("/events")
-	public ResponseEntity<Map<String, Object>> getAllPlantCareEvents() {
-		// userId로 필터링하지 않고 모든 이벤트 가져오기
-		List<PlantCareEntity> events = plantCareService.getAllEvents();
+	public ResponseEntity<Map<String, Object>> getPlantCareEventsByUserId(@RequestParam Integer userId) {
+		// userId로 필터링해서 이벤트 가져오기
+		List<PlantCareEntity> events = plantCareService.getEventsByUserId(userId);
 
 		Map<String, Object> response = new HashMap<>();
 		response.put("data", events);
 
 		return ResponseEntity.ok(response);
 	}
+
 
 
 

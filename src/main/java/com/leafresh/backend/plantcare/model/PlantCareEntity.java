@@ -34,11 +34,17 @@ public class PlantCareEntity {
 	@Column(name = "selected_date")
 	private Date selectedDate;
 
+	// 메모
+	@Column(name = "memo",length = 300)
+	private String memo;
+
+
+
 	public PlantCareEntity() {
 	}
 
 	public PlantCareEntity(Integer plantCareId, int water, int sunlight, boolean ventilation, boolean cover,
-		boolean nutrients, Integer userId, Date plantCareCreatedAt, Date selectedDate) {
+		boolean nutrients, Integer userId, Date plantCareCreatedAt, Date selectedDate, String memo) {
 		this.plantCareId = plantCareId;
 		this.water = water;
 		this.sunlight = sunlight;
@@ -48,6 +54,7 @@ public class PlantCareEntity {
 		this.userId = userId;
 		this.plantCareCreatedAt = plantCareCreatedAt;
 		this.selectedDate = selectedDate;
+		this.memo = memo;
 	}
 
 	public Integer getPlantCareId() {
@@ -120,5 +127,13 @@ public class PlantCareEntity {
 
 	public void setSelectedDate(Date selectedDate) {
 		this.selectedDate = selectedDate;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
 }
