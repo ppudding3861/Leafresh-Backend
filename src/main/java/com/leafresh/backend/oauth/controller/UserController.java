@@ -42,6 +42,15 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 
+    // market에서 user email 기준으로 회원정보 조회함
+    @GetMapping("/info-market")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<User> getUserProfileByEmail(@RequestParam String email) {
+        User user = userRepository.findByUserMailAdress(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+        return ResponseEntity.ok(user);
+    }
+
     // 비밀번호 검증 API
     @PostMapping("/verify-password")
     public ResponseEntity<?> verifyPassword(@CurrentUser UserPrincipal userPrincipal, @RequestBody Map<String, String> request) {

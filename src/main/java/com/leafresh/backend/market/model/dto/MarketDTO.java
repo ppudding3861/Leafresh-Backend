@@ -13,12 +13,12 @@ public class MarketDTO {
     private boolean marketStatus;
     private VisibleScope marketVisibleScope; // 게시글 공개 범위
     private LocalDateTime marketCreatedAt;
-    private String userNickname;
+    private String userEmail;
 
     public MarketDTO() {
     }
 
-    public MarketDTO(Integer marketId, String marketCategory, String marketTitle, String marketContent, String marketImage, boolean marketStatus, VisibleScope marketVisibleScope, LocalDateTime marketCreatedAt, String userNickname) {
+    public MarketDTO(Integer marketId, String marketCategory, String marketTitle, String marketContent, String marketImage, boolean marketStatus, VisibleScope marketVisibleScope, LocalDateTime marketCreatedAt, String userEmail) {
         this.marketId = marketId;
         this.marketCategory = marketCategory;
         this.marketTitle = marketTitle;
@@ -27,7 +27,7 @@ public class MarketDTO {
         this.marketStatus = marketStatus;
         this.marketVisibleScope = marketVisibleScope;
         this.marketCreatedAt = marketCreatedAt;
-        this.userNickname = userNickname;
+        this.userEmail = userEmail;
     }
 
     public int getMarketId() {
@@ -94,12 +94,12 @@ public class MarketDTO {
         this.marketCreatedAt = marketCreatedAt;
     }
 
-    public String getUserNickname() {
-        return userNickname;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setUserNickname(String userNickname) {
-        this.userNickname = userNickname;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class MarketDTO {
                 ", marketStatus=" + marketStatus +
                 ", marketVisibleScope=" + marketVisibleScope +
                 ", marketCreatedAt=" + marketCreatedAt +
-                ", userNickname='" + userNickname + '\'' +
+                ", userEmail='" + userEmail + '\'' +
                 '}';
     }
 }

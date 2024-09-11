@@ -149,9 +149,11 @@ public class MarketController {
     }
 
     @PutMapping("/update-status/{id}")
-    public ResponseEntity<?> updateStatus (@RequestParam("status") Boolean status, @PathVariable Integer id) {
+    public ResponseEntity<?> updateStatus (@RequestBody Map<String, Boolean> requestBody, @PathVariable Integer id) {
+        Boolean marketStatus = requestBody.get("status");
+
         try {
-            marketService.updateMarketStatus(id, status);
+            marketService.updateMarketStatus(id, marketStatus);
             Map<String, String> response = new HashMap<>();
             response.put("message", "상태가 업데이트되었습니다.");
             return ResponseEntity.ok(response);
@@ -161,5 +163,4 @@ public class MarketController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "서버 오류가 발생했습니다."));
         }
     }
-
 }
