@@ -44,4 +44,20 @@ public class ProfileService {
         profileDTO.setProfileDescription(profileEntity.getProfileDescription());
         return profileDTO;
     }
+
+    public ProfileDTO modifyProfile(Integer userId, ProfileDTO profileDTO) {
+        ProfileEntity profileEntity = profileRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("프로필이 존재하지 않습니다."));
+
+        profileEntity.setProfileTitle(profileDTO.getProfileTitle());
+        profileEntity.setProfileDescription(profileDTO.getProfileDescription());
+
+        ProfileEntity updatedProfile = profileRepository.save(profileEntity);
+
+        ProfileDTO updatedProfileDTO = new ProfileDTO();
+        updatedProfileDTO.setProfileTitle(updatedProfile.getProfileTitle());
+        updatedProfileDTO.setProfileDescription(updatedProfile.getProfileDescription());
+
+        return updatedProfileDTO;
+    }
 }

@@ -79,8 +79,9 @@ public class CustomUserDetailsService implements UserDetailsService {
             user.setUserPassword(passwordEncoder.encode(signUpRequest.getPassword()));
             user.setUserJoinDate(new Date());
             user.setUserReportCount(0);
-            user.setUserStatus(UserStatus.ACTIVE);
+            user.setUserStatus(signUpRequest.isTermsAgreement() ? UserStatus.ACTIVE : UserStatus.SUSPENDED);
             user.setRole(Role.USER);
+            user.setTermsAgreement(signUpRequest.isTermsAgreement());
 
             if (signUpRequest.getImageUrl() != null) {
                 user.setImageUrl(signUpRequest.getImageUrl());
@@ -98,6 +99,20 @@ public class CustomUserDetailsService implements UserDetailsService {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "회원가입 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
+
+    // 약관 동의 상태 업데이트 메서드 추가
+    @Transactional
+    public User updateTermsAgreement(Integer userId, boolean termsAgreement) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        user.setTermsAgreement(termsAgreement);
+        if (!termsAgreement) {
+            user.setUserStatus(UserStatus.SUSPENDED);
+        }
+        return userRepository.save(user);
+    }
+
 
     // 비밀번호 검증 메서드 추가
     @Transactional

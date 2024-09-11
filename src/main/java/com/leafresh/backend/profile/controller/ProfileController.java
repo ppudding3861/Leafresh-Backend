@@ -30,4 +30,10 @@ public class ProfileController {
             return ResponseEntity.status(404).body("정보가 없습니다."); // 프로필이 없는 경우 에러 메시지 반환
         }
     }
+
+    @PostMapping("/modify")
+    public ResponseEntity<?> modifyProfile(@CurrentUser UserPrincipal userPrincipal, @RequestBody ProfileDTO profileDTO) {
+        profileService.modifyProfile(userPrincipal.getUserId(), profileDTO);
+        return ResponseEntity.ok().body("프로필이 성공적으로 수정되었습니다.");
+    }
 }

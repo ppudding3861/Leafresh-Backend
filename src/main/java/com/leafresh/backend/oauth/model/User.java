@@ -58,6 +58,9 @@ public class User {
     @Column(name = "image_url", columnDefinition = "TEXT") // URL 길이 제한 제거
     private String imageUrl; // 프로필 이미지 URL
 
+    @Column(name = "terms_agreement", nullable = false)
+    private boolean termsAgreement; // 약관 동의 여부
+
     // Getter와 Setter 메서드들
 
     public Integer getUserId() {
@@ -164,14 +167,20 @@ public class User {
         this.imageUrl = imageUrl;
     }
 
+    public boolean isTermsAgreement() {
+        return termsAgreement;
+    }
+
+    public void setTermsAgreement(boolean termsAgreement) {
+        this.termsAgreement = termsAgreement;
+    }
+
     // 기본 생성자
     public User() {
     }
 
     // 모든 필드를 포함하는 생성자
-    public User(Integer userId, String userName, String userNickname, String userPhoneNumber,
-                String userMailAdress, String userPassword, Date userJoinDate, Date userExitDate,
-                int userReportCount, String userExitReason, UserStatus userStatus, Role role, String imageUrl) {
+    public User(Integer userId, String userName, String userNickname, String userPhoneNumber, String userMailAdress, String userPassword, Date userJoinDate, Date userExitDate, int userReportCount, String userExitReason, UserStatus userStatus, Role role, String imageUrl, boolean termsAgreement) {
         this.userId = userId;
         this.userName = userName;
         this.userNickname = userNickname;
@@ -185,5 +194,6 @@ public class User {
         this.userStatus = userStatus;
         this.role = role;
         this.imageUrl = imageUrl;
+        this.termsAgreement = termsAgreement;
     }
 }
