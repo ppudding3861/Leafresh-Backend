@@ -36,10 +36,20 @@ public class FeedController {
 			.orElse(ResponseEntity.notFound().build());
 	}
 
-	// 유저의 닉네임을 기반으로 조회
-	@GetMapping("/user/{userId}")
+	// 유저의 아이디 기반으로 조회
+	@GetMapping("/id/{userId}")
 	public ResponseEntity<List<FeedDTO>> getFeedsByUserId(@PathVariable Integer userId) {
 		List<FeedDTO> feeds = feedService.getFeedsByUserId(userId);
+		return ResponseEntity.ok(feeds);
+	}
+
+	// 유저 닉네임을 기반으로 피드 조회
+	@GetMapping("/nickname/{userNickname}")
+	public ResponseEntity<List<FeedDTO>> getFeedsByUsername(@PathVariable String userNickname) {
+		List<FeedDTO> feeds = feedService.getFeedsByUsername(userNickname);
+		if (feeds.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
 		return ResponseEntity.ok(feeds);
 	}
 
