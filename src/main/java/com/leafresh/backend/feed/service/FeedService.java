@@ -103,6 +103,8 @@ public class FeedService {
 			.feedDeleteAt(feedDTO.getFeedDeleteAt())
 			.feedStatus(feedDTO.getFeedStatus())
 			.userId(feedDTO.getUserId())
+			.userName(feedDTO.getUserName())
+			.userNickname(feedDTO.getUserNickname())
 			.build();
 	}
 
@@ -117,6 +119,8 @@ public class FeedService {
 			.feedDeleteAt(feedEntity.getFeedDeleteAt())
 			.feedStatus(feedEntity.getFeedStatus())
 			.userId(feedEntity.getUserId())
+			.userName(feedEntity.getUserName())
+			.userNickname(feedEntity.getUserNickname())
 			.build();
 	}
 }
