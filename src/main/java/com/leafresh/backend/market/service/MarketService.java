@@ -43,7 +43,7 @@ public class MarketService {
             dto.setMarketStatus(entity.isMarketStatus());
             dto.setMarketCreatedAt(entity.getMarketCreatedAt());
             dto.setMarketVisibleScope(entity.getMarketVisibleScope());
-            dto.setUserNickname(entity.getUserNickname());
+            dto.setUserEmail(entity.getUserEmail());
             marketList.add(dto);
         }
         return marketList;
@@ -55,7 +55,7 @@ public class MarketService {
         Optional<User> user = userRepository.findById(userId); // id값을 기준으로 user 객체를 꺼내옴
 
         if (user != null) { // 유저가 존재하면
-            String userNickname = user.get().getUserNickname(); // 유저의 닉네임을 가져옴
+            String userEmailAddress = user.get().getUserMailAdress(); // 유저의 이메일을 가져옴(고유한 값)
 
             MarketEntity entity = new MarketEntity.Builder()
                     .marketCategory(marketDTO.getMarketCategory())
@@ -64,7 +64,7 @@ public class MarketService {
                     .marketImage(marketDTO.getMarketImage())
                     .marketStatus(true) // 등록되었을때는 무조건 분양중인 초기상태로 시작
                     .marketVisibleScope(marketDTO.getMarketVisibleScope())
-                    .userNickname(userNickname)
+                    .userEmail(userEmailAddress) // 이메일을 엔티티에 담아줌
                     .build();
             marketRepository.save(entity);
             System.out.println(entity); // 잘 저장되었나 출력
@@ -79,7 +79,7 @@ public class MarketService {
                 savedDTO.setMarketCreatedAt(entity.getMarketCreatedAt());
                 savedDTO.setMarketStatus(entity.isMarketStatus());
                 savedDTO.setMarketVisibleScope(entity.getMarketVisibleScope());
-                savedDTO.setUserNickname(entity.getUserNickname());
+                savedDTO.setUserEmail(entity.getUserEmail());
 
                 return savedDTO;
             } else {
@@ -101,24 +101,24 @@ public class MarketService {
             detailDTO.setMarketTitle(findEntity.get().getMarketTitle());
             detailDTO.setMarketContent(findEntity.get().getMarketContent());
             detailDTO.setMarketImage(findEntity.get().getMarketImage());
-            detailDTO.setMarketStatus(findEntity.isPresent());
+            detailDTO.setMarketStatus(findEntity.get().isMarketStatus());
             detailDTO.setMarketVisibleScope(findEntity.get().getMarketVisibleScope());
             detailDTO.setMarketCreatedAt(findEntity.get().getMarketCreatedAt());
-            detailDTO.setUserNickname(findEntity.get().getUserNickname());
+            detailDTO.setUserEmail(findEntity.get().getUserEmail());
         }
         return detailDTO;
     }
 
     @Transactional
     public MarketDTO modifyPost(MarketDTO marketDTO, @CurrentUser UserPrincipal userPrincipal, Integer id) {
-        Integer userId = userPrincipal.getUserId();
-        Optional<User> user = userRepository.findById(userId);
-        Optional<MarketEntity> marketEntity = marketRepository.findById(id);
+        Integer userId = userPrincipal.getUserId(); // 현재 인증된 유저의 아이디값을 가져옴
+        Optional<User> user = userRepository.findById(userId); // user id값 기준으로 유저 엔터티 조회
+        Optional<MarketEntity> marketEntity = marketRepository.findById(id); // url id값 기준으로 게시글 조회
 
         if (user != null) { // 유저가 존재하면
             if (marketEntity.isPresent()) { // 게시글이 존재하면
                 MarketEntity market = marketEntity.get();
-                String userNickname = user.get().getUserNickname(); // 유저의 닉네임을 가져옴
+                String userEmailAddress = user.get().getUserMailAdress(); // 유저의 이메일을 가져옴
 
                 market.setMarketCategory(marketDTO.getMarketCategory());
                 market.setMarketTitle(marketDTO.getMarketTitle());
@@ -126,7 +126,7 @@ public class MarketService {
                 market.setMarketImage(marketDTO.getMarketImage());
                 market.setMarketStatus(marketDTO.isMarketStatus());
                 market.setMarketVisibleScope(marketDTO.getMarketVisibleScope());
-                market.setUserNickname(userNickname);
+                market.setUserEmail(userEmailAddress);
 
                 marketRepository.save(market);
                 System.out.println("수정완료 : "+market); // 수정이 잘 되었는지 확인
@@ -141,7 +141,7 @@ public class MarketService {
                     savedDTO.setMarketCreatedAt(market.getMarketCreatedAt());
                     savedDTO.setMarketStatus(market.isMarketStatus());
                     savedDTO.setMarketVisibleScope(market.getMarketVisibleScope());
-                    savedDTO.setUserNickname(market.getUserNickname());
+                    savedDTO.setUserEmail(market.getUserEmail());
 
                     return savedDTO;
                 } else {
@@ -187,11 +187,11 @@ public class MarketService {
     @Transactional
     public void updateMarketStatus(Integer id, Boolean status) {
         Optional<MarketEntity> marketEntity = marketRepository.findById(id);
+        System.out.println(marketEntity);
 
         if (marketEntity.isPresent()) { // 게시글이 존재하면
-            System.out.println(marketEntity);
             MarketEntity market = marketEntity.get();
-            market.setMarketStatus(!status);
+            market.setMarketStatus(status);
             marketRepository.save(market);
         } else {
             System.out.println("게시글이 존재하지 않습니다.");

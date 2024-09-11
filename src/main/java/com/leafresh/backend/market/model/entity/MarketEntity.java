@@ -45,8 +45,8 @@ public class MarketEntity {
     @Column(name = "market_visible_scope")
     private VisibleScope marketVisibleScope; // 게시글 공개 범위 (전체공개, 팔로워 공개, 비공개, 삭제된 게시글)
 
-    @Column(name = "user_nickname")
-    private String userNickname; // 작성자 ID
+    @Column(name = "user_email")
+    private String userEmail; // 작성자 이메일
 
     public MarketEntity() {
     }
@@ -58,7 +58,7 @@ public class MarketEntity {
         this.marketImage = builder.marketImage;
         this.marketStatus = builder.marketStatus;
         this.marketVisibleScope = builder.marketVisibleScope;
-        this.userNickname = builder.userNickname;
+        this.userEmail = builder.userEmail;
     }
 
     public static class Builder{
@@ -68,7 +68,7 @@ public class MarketEntity {
         private String marketImage;
         private Boolean marketStatus;
         private VisibleScope marketVisibleScope;
-        private String userNickname;
+        private String userEmail;
 
         public Builder marketCategory(String marketCategory) {
             this.marketCategory = marketCategory;
@@ -108,8 +108,8 @@ public class MarketEntity {
             return this;
         }
 
-        public Builder userNickname(String userNickname) {
-            this.userNickname = userNickname;
+        public Builder userEmail(String userEmail) {
+            this.userEmail = userEmail;
             return this;
         }
 
@@ -157,8 +157,8 @@ public class MarketEntity {
         this.marketStatus = marketStatus;
     }
 
-    public void setUserNickname(String userNickname) {
-        this.userNickname = userNickname;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public Integer getMarketId() {
@@ -201,8 +201,8 @@ public class MarketEntity {
         return marketVisibleScope;
     }
 
-    public String getUserNickname() {
-        return userNickname;
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public void setMarketVisibleScope(VisibleScope marketVisibleScope) {
@@ -222,7 +222,7 @@ public class MarketEntity {
                 ", marketComplatedAt=" + marketComplatedAt +
                 ", marketStatus=" + marketStatus +
                 ", marketVisibleScope=" + marketVisibleScope +
-                ", userNickname='" + userNickname + '\'' +
+                ", userEmail='" + userEmail + '\'' +
                 '}';
     }
 }
