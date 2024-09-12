@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class FeedService {
 
@@ -71,12 +73,28 @@ public class FeedService {
 			.collect(Collectors.toList());
 	}
 
-	// 피드수정
+	// 피드 수정 메서드
 	public FeedDTO updateFeed(FeedDTO feedDTO) {
-		FeedEntity feedEntity = convertToEntity(feedDTO);
-		FeedEntity updatedEntity = feedRepository.save(feedEntity);
-		return convertToDTO(updatedEntity);
+		// 기존 피드 엔티티를 DB에서 조회
+		Optional<FeedEntity> existingFeedOpt = feedRepository.findById(feedDTO.getFeedId());
+
+		if (existingFeedOpt.isPresent()) {
+			FeedEntity existingFeed = existingFeedOpt.get();
+
+			// 기존 엔티티를 빌더 패턴으로 사용하여 필요한 필드만 수정
+			FeedEntity updatedEntity = existingFeed.toBuilder()
+				.feedContent(feedDTO.getFeedContent())
+				.feedImage(feedDTO.getFeedImage())
+				.build();
+
+			// 엔티티 저장
+			FeedEntity savedEntity = feedRepository.save(updatedEntity);
+			return convertToDTO(savedEntity);
+		} else {
+			throw new EntityNotFoundException("피드를 찾을 수 없습니다.");
+		}
 	}
+
 
 	// 논리적피드삭제
 	@Transactional
@@ -105,6 +123,7 @@ public class FeedService {
 			.userId(feedDTO.getUserId())
 			.userName(feedDTO.getUserName())
 			.userNickname(feedDTO.getUserNickname())
+			.userProfileImg(feedDTO.getUserProfileImg())
 			.build();
 	}
 
@@ -121,6 +140,7 @@ public class FeedService {
 			.userId(feedEntity.getUserId())
 			.userName(feedEntity.getUserName())
 			.userNickname(feedEntity.getUserNickname())
+			.userProfileImg(feedEntity.getUserProfileImg())
 			.build();
 	}
 }

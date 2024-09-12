@@ -34,7 +34,7 @@ public class FeedEntity {
 
 	@Column(name = "feed_content")
 	@NotNull(message = "피드내용는 null이 될 수 없습니다.")
-	@Size(max = 100, message = "피드의 내용은 100자 이상이어야 합니다.")
+	@Size(min = 20, max = 1000, message = "피드의 내용은 20자 이상, 1000자 이하여야 합니다.")
 	private String feedContent;
 
 	@Column(name = "feed_image")
