@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface ProfileRepository extends JpaRepository<ProfileEntity, Integer> {
     Optional<ProfileEntity> findByUserUserId(Integer userId);
+    Optional<ProfileEntity> findByUserUserNickname(String userNickname);
 }
