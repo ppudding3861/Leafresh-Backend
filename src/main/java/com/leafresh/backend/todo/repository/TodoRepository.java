@@ -12,5 +12,5 @@ import com.leafresh.backend.todo.model.ToDoEntity;
 public interface TodoRepository extends JpaRepository<ToDoEntity, Integer> {
 
 
-	List<ToDoEntity> findAllByUserIdAndTodoSelectedDate(Integer userId, LocalDate today);
+	List<ToDoEntity> findAllByUserIdAndTodoSelectedDate(Integer userId, LocalDate selectedDate);
 }
