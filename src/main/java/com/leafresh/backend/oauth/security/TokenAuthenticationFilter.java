@@ -31,18 +31,30 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            // 인증이 필요하지 않은 경로를 체크하여 필터에서 제외
+            String path = request.getServletPath();
+            if (isExcludedPath(path)) {
+                logger.debug("Excluding path from filter: {}", path);
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             String jwt = getJwtFromRequest(request);
+            logger.debug("Extracted JWT from request: {}", jwt);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                Integer userId = tokenProvider.getUserIdFromToken(jwt); // Long에서 Integer로 변경
+                Integer userId = tokenProvider.getUserIdFromToken(jwt);
+                logger.debug("Valid JWT token for userId: {}", userId);
 
-                UserDetails userDetails = customUserDetailsService.loadUserById(userId); // userId 타입에 맞게 수정
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            }else {
-                logger.error("Invalid JWT Token");
+                logger.debug("Set authentication in security context for userId: {}", userId);
+            } else {
+                logger.warn("JWT Token is invalid or missing.");
             }
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
@@ -54,10 +66,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            logger.debug("Extracted JWT Token: " + bearerToken.substring(7));
-            return bearerToken.substring(7);
+            String token = bearerToken.substring(7);
+            logger.debug("Extracted JWT Token: {}", token);
+            return token;
         }
         logger.warn("No JWT token found in request headers.");
         return null;
+    }
+
+    // 인증이 필요하지 않은 경로를 정의합니다.
+    private boolean isExcludedPath(String path) {
+        return path.equals("/auth/login") || path.equals("/auth/register") || path.startsWith("/public/");
     }
 }

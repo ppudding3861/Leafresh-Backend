@@ -36,24 +36,31 @@ public class TokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(Integer.toString(userPrincipal.getUserId()))  // Long에서 Integer로 수정
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
                 .compact();
+
+        logger.debug("Created token for userId: {}, token: {}", userPrincipal.getUserId(), token);
+        return token;
     }
 
+    // 사용자 세부 정보로 토큰 생성
     public String createTokenWithUserDetails(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
-        return Jwts.builder()
-                .setSubject(Integer.toString(user.getUserId()))
+        String token = Jwts.builder()
+                .setSubject(Integer.toString(user.getUserId()))  // Long으로 수정
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
                 .compact();
+
+        logger.debug("Created token for userId: {}, token: {}", user.getUserId(), token);
+        return token;
     }
 
 
@@ -90,24 +97,30 @@ public class TokenProvider {
         return Integer.parseInt(claims.getSubject());  // Integer로 파싱
     }
 
-    // 토큰 유효성 검사
-    public boolean validateToken(String authToken) {
+    // 토큰 검증
+    public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
+            logger.debug("Validating token: {}", token);
+            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(token);
             return true;
-        } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+        } catch (MalformedJwtException e) {
+            logger.error("Malformed JWT token: {}", token, e);
+            return false;
+        } catch (ExpiredJwtException e) {
+            logger.error("Expired JWT token: {}", token, e);
+            return false;
+        } catch (UnsupportedJwtException e) {
+            logger.error("Unsupported JWT token: {}", token, e);
+            return false;
+        } catch (SignatureException e) {
+            logger.error("Invalid JWT signature: {}", token, e);
+            return false;
+        }catch (JwtException e) {
+            logger.error("Invalid JWT token", e);
+            return false;
         }
-        return false;
     }
+
 
     // 리프레시 토큰에서 사용자 ID 추출
     public Integer getUserIdFromRefreshToken(String token) {

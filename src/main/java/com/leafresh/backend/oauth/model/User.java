@@ -1,11 +1,14 @@
 package com.leafresh.backend.oauth.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.leafresh.backend.follow.model.entity.FollowEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -61,7 +64,33 @@ public class User {
     @Column(name = "terms_agreement", nullable = false)
     private boolean termsAgreement; // 약관 동의 여부
 
-    // Getter와 Setter 메서드들
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FollowEntity> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FollowEntity> followings = new ArrayList<>();
+
+    // 기본 생성자
+    public User() {
+    }
+
+    // 모든 필드를 포함하는 생성자
+    public User(Integer userId, String userName, String userNickname, String userPhoneNumber, String userMailAdress, String userPassword, Date userJoinDate, Date userExitDate, int userReportCount, String userExitReason, UserStatus userStatus, Role role, String imageUrl, boolean termsAgreement) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userNickname = userNickname;
+        this.userPhoneNumber = userPhoneNumber;
+        this.userMailAdress = userMailAdress;
+        this.userPassword = userPassword;
+        this.userJoinDate = userJoinDate;
+        this.userExitDate = userExitDate;
+        this.userReportCount = userReportCount;
+        this.userExitReason = userExitReason;
+        this.userStatus = userStatus;
+        this.role = role;
+        this.imageUrl = imageUrl;
+        this.termsAgreement = termsAgreement;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -175,25 +204,19 @@ public class User {
         this.termsAgreement = termsAgreement;
     }
 
-    // 기본 생성자
-    public User() {
+    public List<FollowEntity> getFollowers() {
+        return followers;
     }
 
-    // 모든 필드를 포함하는 생성자
-    public User(Integer userId, String userName, String userNickname, String userPhoneNumber, String userMailAdress, String userPassword, Date userJoinDate, Date userExitDate, int userReportCount, String userExitReason, UserStatus userStatus, Role role, String imageUrl, boolean termsAgreement) {
-        this.userId = userId;
-        this.userName = userName;
-        this.userNickname = userNickname;
-        this.userPhoneNumber = userPhoneNumber;
-        this.userMailAdress = userMailAdress;
-        this.userPassword = userPassword;
-        this.userJoinDate = userJoinDate;
-        this.userExitDate = userExitDate;
-        this.userReportCount = userReportCount;
-        this.userExitReason = userExitReason;
-        this.userStatus = userStatus;
-        this.role = role;
-        this.imageUrl = imageUrl;
-        this.termsAgreement = termsAgreement;
+    public void setFollowers(List<FollowEntity> followers) {
+        this.followers = followers;
+    }
+
+    public List<FollowEntity> getFollowings() {
+        return followings;
+    }
+
+    public void setFollowings(List<FollowEntity> followings) {
+        this.followings = followings;
     }
 }
