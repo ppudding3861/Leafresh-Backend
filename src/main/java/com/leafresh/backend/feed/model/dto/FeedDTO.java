@@ -19,8 +19,8 @@ public class FeedDTO {
 
 	private Integer feedId;
 
-	@NotNull(message = "피드내용는 null이 될 수 없습니다.")
-	@Size(max = 100, message = "피드의 내용은 100자 이상이어야 합니다.")
+	@NotNull(message = "피드 내용은 null이 될 수 없습니다.")
+	@Size(min = 20, max = 1000, message = "피드의 내용은 20자 이상, 1000자 이하여야 합니다.")
 	private String feedContent;
 
 	@NotNull(message = "피드이미지는 null이 될 수 없습니다.")
