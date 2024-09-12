@@ -19,7 +19,7 @@ public class PlantController {
     private PlantService plantService;
 
     @PostMapping("/add")
-    public ResponseEntity<PlantDTO> addPlant(@RequestBody PlantDTO plantDTO) {
+    public ResponseEntity<PlantDTO> addPlant(@ModelAttribute PlantDTO plantDTO) {
         try {
             PlantDTO createdPlant = plantService.savePlant(plantDTO);
             return new ResponseEntity<>(createdPlant, HttpStatus.CREATED);
