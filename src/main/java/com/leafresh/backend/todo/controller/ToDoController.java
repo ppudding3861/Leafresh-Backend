@@ -30,7 +30,6 @@ public class ToDoController {
 	}
 
 
-
 	// 오늘날짜 + userID 기준으로 보여준다.
 	@GetMapping("/today")
 	public ResponseEntity<Map<String, Object>> getTodayTodos(Integer userId) {
@@ -81,6 +80,14 @@ public class ToDoController {
 		Map<String, Object> response = new HashMap<>();
 
 
+		if (todoId == null) {
+			response.put("status", "failed");
+			response.put("message", "todoId가 없습니다.");
+			return ResponseEntity.badRequest().body(response);  // 400 Bad Request 반환
+		}
+
+
+
 		if (action == 0) {
 			// action이 0이면 해당 todoId를 삭제
 			toDoService.deleteTodoById(todoId);
@@ -97,11 +104,16 @@ public class ToDoController {
 
 
 
-
 	}
 
-
-
-
-
 }
+
+
+
+
+
+
+
+
+
+

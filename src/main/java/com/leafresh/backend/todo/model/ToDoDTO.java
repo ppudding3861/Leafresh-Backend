@@ -13,6 +13,7 @@ public class ToDoDTO {
 	}
 
 	public ToDoDTO(Integer todoId, String todoContent, LocalDate todoSelectedDate, Integer userId) {
+
 		this.todoId = todoId;
 		this.todoContent = todoContent;
 		this.todoSelectedDate = todoSelectedDate;

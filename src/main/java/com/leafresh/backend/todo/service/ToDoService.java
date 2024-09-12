@@ -23,8 +23,6 @@ public class ToDoService {
 	}
 
 
-
-
 	public ToDoEntity addTodo(ToDoDTO toDoDTO) {
 		ToDoEntity newTodo = new ToDoEntity();
 		newTodo.setTodoContent(toDoDTO.getTodoContent());
@@ -41,5 +39,11 @@ public class ToDoService {
 
 	public void deleteTodoById(Integer todoId) {
 		todoRepository.deleteById(todoId);
+	}
+
+	public List<ToDoEntity> getTodosByUserIdAndDate(Integer userId, LocalDate selectedDate) {
+		return todoRepository.findAllByUserIdAndTodoSelectedDate(userId, selectedDate);
+
+
 	}
 }
