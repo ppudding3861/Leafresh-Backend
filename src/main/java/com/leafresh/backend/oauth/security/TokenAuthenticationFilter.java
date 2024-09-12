@@ -31,14 +31,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            // 인증이 필요하지 않은 경로를 체크하여 필터에서 제외
-            String path = request.getServletPath();
-            if (isExcludedPath(path)) {
-                logger.debug("Excluding path from filter: {}", path);
-                filterChain.doFilter(request, response);
-                return;
-            }
-
             String jwt = getJwtFromRequest(request);
             logger.debug("Extracted JWT from request: {}", jwt);
 
@@ -72,10 +64,5 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
         logger.warn("No JWT token found in request headers.");
         return null;
-    }
-
-    // 인증이 필요하지 않은 경로를 정의합니다.
-    private boolean isExcludedPath(String path) {
-        return path.equals("/auth/login") || path.equals("/auth/register") || path.startsWith("/public/");
     }
 }

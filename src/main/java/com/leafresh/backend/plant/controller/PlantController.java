@@ -28,6 +28,7 @@ public class PlantController {
         }
     }
 
+
     @GetMapping("/plants")
     public ResponseEntity<List<PlantDTO>> getAllPlants() {
         List<PlantDTO> plants = plantService.getAllPlants();

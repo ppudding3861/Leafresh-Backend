@@ -8,6 +8,8 @@ import com.leafresh.backend.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProfileService {
 
@@ -60,4 +62,11 @@ public class ProfileService {
 
         return updatedProfileDTO;
     }
-}
+
+        public Optional<ProfileDTO> findProfileByUserId(Integer userId) {
+            return profileRepository.findByUserUserId(userId)
+                    .map(profile -> new ProfileDTO(profile.getProfileTitle(), profile.getProfileDescription()));
+        }
+    }
+
+

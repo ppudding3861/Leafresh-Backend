@@ -10,8 +10,8 @@ import com.leafresh.backend.oauth.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,7 +19,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
 
     private UserRepository userRepository;
     private CustomUserDetailsService customUserDetailsService;
@@ -33,26 +32,23 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        // userPrincipal에서 userId를 가져올 때 적절한 메서드 사용
         Integer userId = userPrincipal.getUserId();
-
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 
-    // market에서 user email 기준으로 회원정보 조회함
     @GetMapping("/info-market")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<User> getUserProfileByEmail(@RequestParam String email) {
         User user = userRepository.findByUserMailAdress(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
         return ResponseEntity.ok(user);
     }
 
-    // 비밀번호 검증 API
     @PostMapping("/verify-password")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> verifyPassword(@CurrentUser UserPrincipal userPrincipal, @RequestBody Map<String, String> request) {
         User user = customUserDetailsService.loadUserEntityById(userPrincipal.getUserId());
         String currentPassword = request.get("password");
@@ -64,6 +60,7 @@ public class UserController {
     }
 
     @PostMapping("/update")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateUser(@CurrentUser UserPrincipal userPrincipal, @RequestBody Map<String, String> request) {
         try {
             User updatedUser = customUserDetailsService.updateUser(userPrincipal.getUserId(), request);
@@ -71,5 +68,17 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    @GetMapping("/info-by-nickname")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getUserProfileByNickname(@RequestParam String nickname) {
+        User user = userRepository.findByUserNickname(nickname)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
+        return ResponseEntity.ok(Map.of(
+                "userName", user.getUserName(),
+                "imageUrl", user.getImageUrl(),
+                "followers", user.getFollowers().size()
+        ));
     }
 }

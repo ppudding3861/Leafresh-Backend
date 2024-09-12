@@ -99,6 +99,11 @@ public class TokenProvider {
 
     // 토큰 검증
     public boolean validateToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            logger.error("JWT 토큰이 없거나 비어 있습니다.");
+            return false;
+        }
+
         try {
             logger.debug("Validating token: {}", token);
             Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(token);
@@ -115,12 +120,11 @@ public class TokenProvider {
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", token, e);
             return false;
-        }catch (JwtException e) {
+        } catch (JwtException e) {
             logger.error("Invalid JWT token", e);
             return false;
         }
     }
-
 
     // 리프레시 토큰에서 사용자 ID 추출
     public Integer getUserIdFromRefreshToken(String token) {
