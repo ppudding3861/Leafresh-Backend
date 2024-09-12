@@ -1,7 +1,6 @@
 package com.leafresh.backend.todo.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,48 +23,23 @@ public class ToDoService {
 	}
 
 
-	public List<ToDoDTO> getAllToDos() {
 
-		List<ToDoEntity> toDoEntities = todoRepository.findAll();
-		List<ToDoDTO> toDoDTOs = new ArrayList<>();
-		for (ToDoEntity toDoEntity : toDoEntities) {
-			ToDoDTO toDoDTO = new ToDoDTO();
-			toDoDTO.setTodoId(toDoEntity.getTodoId());
-			toDoDTO.setTodoContent(toDoEntity.getTodoContent());
-			toDoDTO.setTodoCreateAt(toDoEntity.getTodoCreateAt());
 
-			toDoDTOs.add(toDoDTO);
+	public ToDoEntity addTodo(ToDoDTO toDoDTO) {
+		ToDoEntity newTodo = new ToDoEntity();
+		newTodo.setTodoContent(toDoDTO.getTodoContent());
+		newTodo.setUserId(toDoDTO.getUserId());
+		newTodo.setTodoSelectedDate(toDoDTO.getTodoSelectedDate());
 
-		}
-
-		return toDoDTOs;
-	}
-
-	public ToDoDTO todoSave(ToDoDTO toDoDTO) {
-
-		ToDoEntity toDoEntity = new ToDoEntity();
-		toDoEntity.setTodoContent(toDoDTO.getTodoContent());
-		toDoEntity.setTodoId(toDoDTO.getTodoId());
-
-		todoRepository.save(toDoEntity);
-
-		return new ToDoDTO();
+		return todoRepository.save(newTodo);
 
 	}
 
-	public ToDoEntity updateTodoStatus(Integer id, String status) {
-		ToDoEntity toDoEntity = todoRepository.findById(id).orElse(null);
-		toDoEntity.setTodoStatus(status);
-		return todoRepository.save(toDoEntity);
+	public List<ToDoEntity> getTodayTodosByUserIdAndSelectedDate(Integer userId, LocalDate today) {
+		return todoRepository.findAllByUserIdAndTodoSelectedDate(userId, today);
 	}
 
-	public List<ToDoEntity> getTodayTodos() {
-		LocalDate today = LocalDate.now();
-		return todoRepository.findAllByTodoCreateAtBetween(
-			today.atStartOfDay(),
-			today.plusDays(1).atStartOfDay()
-		);
-
-
+	public void deleteTodoById(Integer todoId) {
+		todoRepository.deleteById(todoId);
 	}
 }

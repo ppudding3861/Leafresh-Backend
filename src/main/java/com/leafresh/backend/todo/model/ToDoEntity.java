@@ -1,5 +1,6 @@
 package com.leafresh.backend.todo.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,6 +30,10 @@ public class ToDoEntity {
 	@Column(name = "user_id")
 	private Integer userId;
 
+	// 추가된 필드: 사용자가 선택한 날짜
+	@Column(name = "todo_selected_date")
+	private LocalDate todoSelectedDate;
+
 	@Column(name = "todo_status", nullable = false)
 	private String todoStatus = "N"; // 기본값 'N'
 
@@ -36,16 +41,17 @@ public class ToDoEntity {
 	private boolean todoSatus2 = false;
 
 
+
 	public ToDoEntity() {
 	}
 
 	public ToDoEntity(Integer todoId, String todoContent, LocalDateTime todoCreateAt, Integer userId,
-		String todoStatus) {
+		LocalDate todoSelectedDate) {
 		this.todoId = todoId;
 		this.todoContent = todoContent;
 		this.todoCreateAt = todoCreateAt;
 		this.userId = userId;
-		this.todoStatus = todoStatus;
+		this.todoSelectedDate = todoSelectedDate;
 	}
 
 	public Integer getTodoId() {
@@ -80,11 +86,22 @@ public class ToDoEntity {
 		this.userId = userId;
 	}
 
-	public String getTodoStatus() {
-		return todoStatus;
+	public LocalDate getTodoSelectedDate() {
+		return todoSelectedDate;
 	}
 
-	public void setTodoStatus(String todoStatus) {
-		this.todoStatus = todoStatus;
+	public void setTodoSelectedDate(LocalDate todoSelectedDate) {
+		this.todoSelectedDate = todoSelectedDate;
+	}
+
+	@Override
+	public String toString() {
+		return "ToDoEntity{" +
+			"todoId=" + todoId +
+			", todoContent='" + todoContent + '\'' +
+			", todoCreateAt=" + todoCreateAt +
+			", userId=" + userId +
+			", todoSelectedDate=" + todoSelectedDate +
+			'}';
 	}
 }

@@ -1,20 +1,21 @@
 package com.leafresh.backend.todo.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 public class ToDoDTO {
 
 	private Integer todoId;
 	private String todoContent;
-	private LocalDateTime todoCreateAt;
+	private LocalDate todoSelectedDate;
 	private Integer userId;
 
 	public ToDoDTO() {
 	}
 
-	public ToDoDTO(Integer todoId, String todoContent, LocalDateTime todoCreate_at, Integer userId) {
+	public ToDoDTO(Integer todoId, String todoContent, LocalDate todoSelectedDate, Integer userId) {
 		this.todoId = todoId;
 		this.todoContent = todoContent;
-		this.todoCreateAt = todoCreateAt;
+		this.todoSelectedDate = todoSelectedDate;
 		this.userId = userId;
 	}
 
@@ -34,12 +35,12 @@ public class ToDoDTO {
 		this.todoContent = todoContent;
 	}
 
-	public LocalDateTime getTodoCreateAt(LocalDateTime todoCreateAt) {
-		return this.todoCreateAt;
+	public LocalDate getTodoSelectedDate() {
+		return todoSelectedDate;
 	}
 
-	public void setTodoCreateAt(LocalDateTime todoCreateAt) {
-		this.todoCreateAt = todoCreateAt;
+	public void setTodoSelectedDate(LocalDate todoSelectedDate) {
+		this.todoSelectedDate = todoSelectedDate;
 	}
 
 	public Integer getUserId() {
@@ -55,7 +56,7 @@ public class ToDoDTO {
 		return "ToDoDTO{" +
 			"todoId=" + todoId +
 			", todoContent='" + todoContent + '\'' +
-			", todoCreateAt=" + todoCreateAt +
+			", todoSelectedDate=" + todoSelectedDate +
 			", userId=" + userId +
 			'}';
 	}
