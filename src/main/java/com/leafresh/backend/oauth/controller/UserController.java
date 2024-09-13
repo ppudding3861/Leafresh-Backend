@@ -78,7 +78,8 @@ public class UserController {
         return ResponseEntity.ok(Map.of(
                 "userName", user.getUserName(),
                 "imageUrl", user.getImageUrl(),
-                "followers", user.getFollowers().size()
+                "followers", user.getFollowers().size(),
+                "userEmail", user.getUserMailAdress()
         ));
     }
 }
