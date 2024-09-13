@@ -4,14 +4,17 @@ import com.leafresh.backend.follow.model.entity.FollowEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List; // 수정된 부분
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface FollowRepository extends JpaRepository<FollowEntity, Integer> {
 
     boolean existsByFollowerUserIdAndFollowingUserId(Integer followerId, Integer followingId);
 
-    // 단일 Optional 반환에서 List로 변경
-    List<FollowEntity> findAllByFollowerUserIdAndFollowingUserId(Integer followerId, Integer followingId); // 수정된 부분
+    List<FollowEntity> findAllByFollowerUserIdAndFollowingUserId(Integer followerId, Integer followingId);
+
+    // 팔로워 수를 계산하는 메서드 추가
+    int countByFollowingUserId(Integer followingUserId); // 팔로워 수 계산
+
+    List<FollowEntity> findAllByFollowingUserId(Integer followingId);
 }

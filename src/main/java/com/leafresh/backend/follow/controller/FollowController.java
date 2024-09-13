@@ -39,4 +39,14 @@ public class FollowController {
         followService.unfollowUser(currentUser.getUserId(), followDTO.getFollowingNickname());
         return ResponseEntity.ok().build();
     }
+
+    // 팔로워 수 조회 API
+    @GetMapping("/followers/count")
+    public ResponseEntity<Integer> getFollowersCount(@RequestParam String nickname) {
+        int followersCount = followService.getFollowersCount(nickname);
+        return ResponseEntity.ok(followersCount);
+    }
+
+
+
 }

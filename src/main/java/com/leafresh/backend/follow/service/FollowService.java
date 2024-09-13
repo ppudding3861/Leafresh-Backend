@@ -38,7 +38,7 @@ public class FollowService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", followingNickname));
 
         // 이미 팔로잉 중인지 확인하여 중복 팔로잉을 방지
-        if (!isFollowing(followerId, followingNickname)) {  // 추가된 부분
+        if (!isFollowing(followerId, followingNickname)) {
             FollowEntity followEntity = new FollowEntity.Builder()
                     .follower(follower)
                     .following(following)
@@ -59,4 +59,15 @@ public class FollowService {
 
         followRepository.deleteAll(followEntities);
     }
+
+    // 팔로워 수를 가져오는 메서드 추가
+    @Transactional(readOnly = true)
+    public int getFollowersCount(String nickname) {
+        User user = userRepository.findByUserNickname(nickname)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
+
+        return followRepository.countByFollowingUserId(user.getUserId()); // 팔로워 수를 반환
+    }
+
+
 }
