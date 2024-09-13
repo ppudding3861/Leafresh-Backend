@@ -13,5 +13,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {  // Long�
     Optional<User> findByUserMailAdress(String userMailAdress);  // 메서드명과 필드명 수정
     Boolean existsByUserMailAdress(String userMailAdress);  // 메서드명과 필드명 수정
     Optional<User> findByUserNickname(String userNickname);
-
+    Boolean existsByUserNickname(String userNickname);
 }

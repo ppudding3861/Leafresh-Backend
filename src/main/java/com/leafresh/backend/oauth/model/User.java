@@ -64,11 +64,13 @@ public class User {
     @Column(name = "terms_agreement", nullable = false)
     private boolean termsAgreement; // 약관 동의 여부
 
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FollowEntity> followers = new ArrayList<>();
+    @OneToMany(mappedBy = "follower")
+    @JsonIgnore // 순환 참조 방지
+    private List<FollowEntity> followers;
 
-    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FollowEntity> followings = new ArrayList<>();
+    @OneToMany(mappedBy = "following")
+    @JsonIgnore // 순환 참조 방지
+    private List<FollowEntity> followings;
 
     // 기본 생성자
     public User() {

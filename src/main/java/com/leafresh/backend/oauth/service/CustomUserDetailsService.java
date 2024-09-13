@@ -44,6 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         new UsernameNotFoundException("User not found with email: " + email)
                 );
 
+
         return UserPrincipal.create(user);
     }
 
@@ -68,6 +69,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     public ResponseEntity<?> registerUser(@Valid SignUpRequest signUpRequest) {
         if (userRepository.existsByUserMailAdress(signUpRequest.getEmail())) {
             throw new BadRequestException("이미 사용 중인 이메일입니다.");
+        }else if (userRepository.existsByUserNickname(signUpRequest.getNickname())) {
+            throw new BadRequestException("이미 사용 중인 닉네임입니다.");
         }
 
         try {
