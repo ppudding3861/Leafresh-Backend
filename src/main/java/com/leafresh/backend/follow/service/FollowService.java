@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class FollowService {
 
@@ -21,7 +23,6 @@ public class FollowService {
         this.userRepository = userRepository;
     }
 
-    // 팔로우 상태 확인
     @Transactional(readOnly = true)
     public boolean isFollowing(Integer userId, String followingNickname) {
         User following = userRepository.findByUserNickname(followingNickname)
@@ -29,7 +30,6 @@ public class FollowService {
         return followRepository.existsByFollowerUserIdAndFollowingUserId(userId, following.getUserId());
     }
 
-    // 팔로우 추가
     @Transactional
     public void followUser(Integer followerId, String followingNickname) {
         User follower = userRepository.findById(followerId)
@@ -37,22 +37,26 @@ public class FollowService {
         User following = userRepository.findByUserNickname(followingNickname)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", followingNickname));
 
-        FollowEntity followEntity = new FollowEntity.Builder()
-                .follower(follower)
-                .following(following)
-                .build();
-        followRepository.save(followEntity);
+        // 이미 팔로잉 중인지 확인하여 중복 팔로잉을 방지
+        if (!isFollowing(followerId, followingNickname)) {  // 추가된 부분
+            FollowEntity followEntity = new FollowEntity.Builder()
+                    .follower(follower)
+                    .following(following)
+                    .build();
+            followRepository.save(followEntity);
+        }
     }
 
-    // 팔로우 취소
     @Transactional
     public void unfollowUser(Integer followerId, String followingNickname) {
         User following = userRepository.findByUserNickname(followingNickname)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", followingNickname));
 
-        FollowEntity followEntity = followRepository.findByFollowerUserIdAndFollowingUserId(followerId, following.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Follow", "followerId and followingId", followerId + " and " + following.getUserId()));
+        List<FollowEntity> followEntities = followRepository.findAllByFollowerUserIdAndFollowingUserId(followerId, following.getUserId());
+        if (followEntities.isEmpty()) {
+            throw new ResourceNotFoundException("Follow", "followerId and followingId", followerId + " and " + following.getUserId());
+        }
 
-        followRepository.delete(followEntity);
+        followRepository.deleteAll(followEntities);
     }
 }
