@@ -2,6 +2,8 @@ package com.leafresh.backend.plantcare.model;
 
 import java.util.Date;
 
+import jakarta.validation.constraints.NotNull;
+
 public class PlantCareDTO {
 
 	private Integer plantCareid;
@@ -11,6 +13,7 @@ public class PlantCareDTO {
 	private boolean cover;
 	private boolean nutrients;
 	private Integer userId;
+	@NotNull(message = "날짜를 입력하세요!")
 	private Date selectedDate;
 
 	public PlantCareDTO() {

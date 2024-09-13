@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.leafresh.backend.todo.model.ToDoDTO;
 import com.leafresh.backend.todo.model.ToDoEntity;
@@ -63,12 +64,23 @@ public class ToDoController {
 	@PostMapping("/add")
 	public ResponseEntity<Map<String, Object>> addTodo(@RequestBody ToDoDTO toDoDTO) {
 
-		toDoService.addTodo(toDoDTO);
+	try{
+		// 서비스 계층에서 검증 및 할 일 추가
+		ToDoEntity savedTodo = toDoService.addTodo(toDoDTO);
+
+		// 응답생성
 		Map<String, Object> response = new HashMap<>();
 		response.put("todoIndex", toDoDTO);
 
 		return ResponseEntity.ok(response);
 
+		} catch (ResponseStatusException e) {
+			Map<String, Object> errorResponse = new HashMap<>();
+			errorResponse.put("error", e.getMessage());
+
+			return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+
+		}
 	}
 
 
