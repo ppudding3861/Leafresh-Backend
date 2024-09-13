@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.leafresh.backend.plantcare.model.PlantCareDTO;
 import com.leafresh.backend.plantcare.model.PlantCareEntity;
@@ -34,12 +35,23 @@ public class PlantCareController {
 	@PostMapping("/save")
 	public ResponseEntity<Map<String, Object>> saveOrUpdatePlantCare(@RequestBody PlantCareDTO plantCareDTO) {
 
-		plantCareService.saveOrUpdatePlantCare(plantCareDTO);
+		try{
+			plantCareService.saveOrUpdatePlantCare(plantCareDTO);
 
-		Map<String, Object> response = new HashMap<>();
-		response.put("message", "저장완료요~");
-		response.put("data", plantCareDTO);
-		return ResponseEntity.ok(response);
+			Map<String, Object> response = new HashMap<>();
+			response.put("message", "저장완료요~");
+			response.put("data", plantCareDTO);
+			return ResponseEntity.ok(response);
+		}catch(ResponseStatusException e){
+
+			// 에러발생 처리
+			Map<String, Object> errorResponse = new HashMap<>();
+			errorResponse.put("error", e.getMessage());
+
+			return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+
+		}
+
 	}
 
 
