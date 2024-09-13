@@ -1,5 +1,7 @@
 package com.leafresh.backend.follow.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.leafresh.backend.oauth.model.User;
 import jakarta.persistence.*;
 
@@ -13,22 +15,20 @@ public class FollowEntity {
 
     @ManyToOne
     @JoinColumn(name = "follower_id")
+    @JsonBackReference // 순환 참조 방지
     private User follower;
 
     @ManyToOne
     @JoinColumn(name = "following_id")
+    @JsonManagedReference // 순환 참조 방지
     private User following;
 
-    // 생성자를 private으로 지정하여 외부에서 직접 접근하지 못하게 합니다.
     private FollowEntity(Builder builder) {
         this.follower = builder.follower;
         this.following = builder.following;
     }
 
-    public FollowEntity() {
-
-    }
-
+    public FollowEntity() {}
 
     // Getter 메서드
     public Integer getId() {
@@ -58,7 +58,6 @@ public class FollowEntity {
             return this;
         }
 
-        // build 메서드에서 FollowEntity 객체를 생성하여 반환
         public FollowEntity build() {
             return new FollowEntity(this);
         }

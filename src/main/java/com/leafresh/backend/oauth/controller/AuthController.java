@@ -62,6 +62,9 @@ public class AuthController {
         if (userRepository.existsByUserMailAdress(signUpRequest.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse(false, "중복된 이메일 입니다"));
+        }else if (userRepository.existsByUserNickname(signUpRequest.getNickname())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(false,"중복된 닉네임입니다."));
         }else if (!signUpRequest.isTermsAgreement()) {
             throw new BadRequestException("약관에 동의해야 합니다.");
         }
