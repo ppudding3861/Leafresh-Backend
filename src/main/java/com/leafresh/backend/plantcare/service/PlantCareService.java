@@ -1,5 +1,7 @@
 package com.leafresh.backend.plantcare.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +70,22 @@ public class PlantCareService {
 
 	public List<PlantCareEntity> getAllEvents() {
 		return plantCareRepository.findAll(); // 모든 PlantCareEntity 가져오기
+	}
+
+	public boolean deleteEventByUserIdAndDate(Integer userId, String eventDate) {
+		// String 타입의 eventDate를 LocalDate로 변환
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate date = LocalDate.parse(eventDate, formatter);  // String을 LocalDate로 변환
+
+		// LocalDate 타입으로 검색
+		List<PlantCareEntity> events = plantCareRepository.findByUserIdAndSelectedDate(userId, date);
+
+		if (!events.isEmpty()) {
+			plantCareRepository.deleteAll(events);
+			return true;
+		}
+		return false;
+
 	}
 }
 

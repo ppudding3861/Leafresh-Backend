@@ -1,5 +1,6 @@
 package com.leafresh.backend.plantcare.repository;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,10 @@ public interface PlantCareRepository extends JpaRepository<PlantCareEntity, Inte
 	//userId 로 plantCareEntity 를 찾는다.
 	// 그리고 그 결과를 List<PlantCareEntity 로 반환!
 	List<PlantCareEntity> findAllByUserId(Integer userId);
+
+
+	List<PlantCareEntity> findByUserIdAndSelectedDate(Integer userId, LocalDate selectedDate);
+
+
 
 }
