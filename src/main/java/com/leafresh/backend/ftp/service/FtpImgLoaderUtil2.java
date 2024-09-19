@@ -168,4 +168,6 @@ public class FtpImgLoaderUtil2 {
     private String convertToEnglish(String originalFileName) {
         return originalFileName.replaceAll("[^a-zA-Z0-9.]", "_");
     }
+
+
 }
